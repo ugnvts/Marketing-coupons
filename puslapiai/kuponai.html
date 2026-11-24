@@ -783,22 +783,20 @@ const frow=(title,desc,control,cls='')=>`<div class="frow ${cls}"><div class="fl
 function discountRows(){
   const f=form; const sfx=f.type==='pct'?'%':'€'; const isCode=f.kind==='code';
   if(!isCode && f.type==='lottery') f.type='flat';
+  const cartDesc='Alcohol, infant formula and (LV) energy drinks are not counted.';
   if(f.edit){
     return frow('Discount','Cannot be changed after creation.',
-        `${tf('typeRo','Type',TYPE[f.type],{ro:true})}${hasValue(f.type)?tf('valueRo','Value',valueTxt(f),{ro:true,cls:'narrow'}):''}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow',help:'The discount is calculated up to this amount.'}):''}`)
-      +frow('Minimum basket','The basket amount a customer must reach. Alcohol, infant formula and (LV) energy drinks are not counted.',tf('min','Amount',f.min,{suffix:'€',num:true,cls:'narrow'}));
+        `${tf('typeRo','Type',TYPE[f.type],{ro:true})}${hasValue(f.type)?tf('valueRo','Value',valueTxt(f),{ro:true,cls:'narrow'}):''}`)
+      +frow('Cart requirements',cartDesc,
+        `<div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true,cls:'narrow'})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow'}):''}</div>`);
   }
+  const types=Object.entries(TYPE).filter(([k])=>isCode||k!=='lottery');
   return frow('Discount','How the discount is applied to the basket.',
-      `<div class="radios">
-        ${radioOpt('type','flat',f.type,'Flat discount','Amount in € off the basket')}
-        ${radioOpt('type','pct',f.type,'Percentage','% off the basket')}
-        ${radioOpt('type','free',f.type,'Free delivery','')}
-        ${isCode?radioOpt('type','lottery',f.type,'Lottery','Customer takes part in a draw. Conditions will be added later.'):''}
-      </div>
-      ${hasValue(f.type)?tf('value','Value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}
-      ${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow',hint:'Optional',help:'The discount is calculated up to this amount.'}):''}`)
-    +frow('Minimum basket','The basket amount a customer must reach. Alcohol, infant formula and (LV) energy drinks are not counted.',
-      tf('min','Amount',f.min,{suffix:'€',num:true,cls:'narrow',help:'Barbora\'s minimum order is 19,99 €.'}));
+      `${sel('type','Type',f.type,types,f.type==='lottery'?'Customer takes part in a draw. Conditions will be added later.':'')}
+      ${hasValue(f.type)?tf('value','Value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}`)
+    +frow('Cart requirements',cartDesc,
+      `<div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true,cls:'narrow'})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow',hint:'Optional'}):''}</div>
+       <span class="help">Barbora's minimum order is 19,99 €.${f.type==='pct'?' The discount is calculated up to the maximum basket.':''}</span>`);
 }
 
 function codeFormatRow(){
@@ -944,7 +942,7 @@ function bind(){
     form[r.name]=r.value; if(r.name==='dist'&&r.value!=='shared') form.cmode='custom'; render(true)});
   v.querySelectorAll('[data-k]').forEach(i=>{
     if(i.type==='checkbox'){i.onchange=()=>{form[i.dataset.k]=i.checked;render(true)};return}
-    const rerender=['segment','prefix','len','value','min','audience'].includes(i.dataset.k);
+    const rerender=['segment','prefix','len','value','min','audience','type'].includes(i.dataset.k);
     const ev=i.tagName==='SELECT'?'onchange':'oninput';
     i[ev]=()=>{form[i.dataset.k]=i.value; if(rerender){const id=i.id,pos=i.selectionStart;render(true);const n=document.getElementById(id);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}};
   });
