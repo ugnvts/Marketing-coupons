@@ -231,6 +231,35 @@ td.act{width:56px;padding:8px 16px;text-align:right;position:relative}
 .st-btn:hover{background:var(--gray-50);color:var(--gray-700)}
 .st-btn:disabled{color:var(--gray-300);cursor:default;background:#fff}
 .st-btn svg{width:16px;height:16px}
+.req-btns{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.req-btns .or{color:var(--gray-500)}
+.cat-wrap{position:relative}
+.cat-pop{width:320px;top:44px;right:0;left:auto;display:flex;flex-direction:column;gap:12px}
+.ct-tree{max-height:320px;overflow:auto}
+.ct-row{display:flex;align-items:center;gap:6px;padding-top:4px;padding-bottom:4px}
+.ct-row label{display:flex;align-items:center;gap:8px;color:var(--gray-700);cursor:pointer}
+.ct-row input{width:16px;height:16px;accent-color:var(--indigo-600);margin:0}
+.ct-tg{width:16px;height:16px;border:0;background:none;padding:0;color:var(--gray-500);font-size:16px;line-height:16px;cursor:pointer;flex-shrink:0}
+.req-card{border:1px solid var(--gray-200);border-radius:6px;box-shadow:var(--shadow);background:#fff}
+.rc-head{display:flex;align-items:center;gap:8px;width:100%;padding:12px 16px;background:none;border:0;border-bottom:1px solid var(--gray-200);font-weight:500;color:var(--gray-900);cursor:pointer;text-align:left}
+.rc-head span:first-of-type{flex:1}
+.rc-head svg{color:var(--gray-500)}
+.rc-list{margin:0;padding:12px 16px 12px 34px;max-height:400px;overflow:auto;color:var(--gray-700);border-bottom:1px solid var(--gray-200)}
+.rc-list li{padding:2px 0}
+.rc-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+.rc-confirm{border-top:1px solid var(--gray-200);padding:16px;display:flex;flex-direction:column;gap:12px}
+.rc-ct{display:flex;gap:12px}
+.rc-ct svg{color:var(--red-600);flex-shrink:0}
+.rc-ct b{font-weight:500;color:var(--gray-900)}
+.rc-ct p{margin:2px 0 0;color:var(--gray-500)}
+.rc-cb{display:flex;justify-content:flex-end;gap:8px}
+.btn-danger{background:var(--red-600);color:#fff}
+.btn-danger:hover{background:var(--red-700)}
+.sel-bar{display:flex;align-items:center;gap:10px;background:#1f2937;color:#fff;padding:12px 24px}
+.sel-bar span{flex:1}
+.sel-bar b{font-weight:500}
+tr.sel td{background:var(--indigo-50)}
+td input[type=checkbox],th input[type=checkbox]{width:16px;height:16px;accent-color:var(--indigo-600);margin:0}
 .chk-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:-8px}
 .chk{display:inline-flex;align-items:center;gap:6px}
 .chk svg{width:16px;height:16px;flex-shrink:0}
@@ -316,6 +345,9 @@ td.act{width:56px;padding:8px 16px;text-align:right;position:relative}
 <script>
 /* ---------- Icons ---------- */
 const I = {
+  cart:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>',
+  list:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>',
+  chevU:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>',
   minus:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>',
   funnel:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>',
   plus:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>',
@@ -468,6 +500,7 @@ window.addEventListener('hashchange',()=>{if(location.hash&&location.hash!==rout
 document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');if(a){e.preventDefault();go(a.getAttribute('href'))}},true);
 document.addEventListener('click',e=>{
   if(state.open && !e.target.closest('.chip-wrap') && !e.target.closest('.act')){state.open=null;render(true)}
+  if(form.catOpen && e.target.isConnected && !e.target.closest('.cat-pop') && !e.target.closest('[data-catopen]')){form.catOpen=false;render(true)}
 });
 function go(h){route=h;state.open=null;try{history.pushState(null,'',h)}catch(e){};render()}
 window.addEventListener('popstate',()=>{route=location.hash||'#/groups';render()});
@@ -478,7 +511,8 @@ function render(keepScroll){
   const params=new URLSearchParams(query||'');
   const v=document.getElementById('view');
   let html='';
-  if(['groups','codes','programs'].includes(parts[0]) && parts.length===1) html=listPage(parts[0]);
+  if(parts[parts.length-1]==='products' && form._key) html=productsPage('#/'+parts.slice(0,-1).join('/'));
+  else if(['groups','codes','programs'].includes(parts[0]) && parts.length===1) html=listPage(parts[0]);
   else if(parts[0]==='groups' && parts[2]==='edit') html=formPage('code',groups.find(g=>g.id==parts[1]));
   else if(parts[0]==='groups') html=groupView(groups.find(g=>g.id==parts[1]));
   else if(parts[0]==='programs' && parts[2]==='edit') html=formPage('program',programs.find(p=>p.id==parts[1]));
@@ -676,7 +710,8 @@ function groupView(g){
       vrow('Type',TYPE[g.type])+
       (hasValue(g.type)?vrow('Value',valueTxt(g)):'')+
       vrow('Minimum basket',money(g.min)+' <span class="note">· without alcohol, infant formula and (LV) energy drinks</span>')+
-      (g.type==='pct'?vrow('Maximum basket',money(g.max)+' <span class="note">· discount is calculated up to this amount</span>'):''))}
+      (g.type==='pct'?vrow('Maximum basket',money(g.max)+' <span class="note">· discount is calculated up to this amount</span>'):'')+
+      (g.type==='lottery'?vrow('Required products',esc(reqTxt(g)||'—'))+vrow('Purchase condition',esc(reqCondTxt(g)||'—')):''))}
     ${sec('Validity',
       vrow('Valid (delivery date)',period(g.from,g.to)+' <span class="note">· end date included</span>')+
       vrow('Delivery hours','All day')+
@@ -721,9 +756,10 @@ function initForm(kind,rec){
   if(rec && kind==='code') form={kind,edit:true,...rec,from:rec.from,to:rec.to,count:rec.total,code:rec.prefix,hours:false};
   else if(rec) form={kind,edit:true,...rec};
   else form={kind,edit:false,type:'flat',value:'',min:'',max:'',from:TODAY,to:addDays(TODAY,30),hours:false,hFrom:0,hTo:23,
-    dist:'segment',segment:null,aud:{},paud:{},cmode:'custom',prefix:'',len:6,code:'',count:50,name:'',desc:'',customer:'',app:false,unlimited:false,
+    dist:'segment',segment:null,aud:{},paud:{},cmode:'custom',reqBy:null,reqCats:[],reqProds:[],reqMetric:'units',reqValue:'',prefix:'',len:6,code:'',count:50,name:'',desc:'',customer:'',app:false,unlimited:false,
     pkind:'accumulative',cond:'orders',condValue:'',within:'days',days:30,couponDays:30,audience:'Lojalus'};
   if(rec && kind==='program') form.pkind=rec.kind;
+  if(rec && kind==='code'){const q=rec.req||{};Object.assign(form,{reqBy:q.by||null,reqCats:q.by==='categories'?[...q.items]:[],reqProds:q.by==='products'?[...q.ids]:[],reqMetric:q.metric||'units',reqValue:q.value??''})}
 }
 function radioOpt(name,val,cur,t,s,extra=''){
   return `<label class="radio ${extra}"><input type="radio" name="${name}" value="${val}" ${cur===val?'checked':''} ${extra.includes('disabled')?'disabled':''}><span><span class="t">${t}</span>${s?`<br><span class="s">${s}</span>`:''}</span></label>`;
@@ -790,6 +826,94 @@ function renderSheet(){
   el.querySelector('.sheet').onclick=e=>{if(sheet.pop&&!e.target.closest('.chip-wrap')){sheet.pop=null;renderSheet()}};
 }
 
+/* ---------- Lottery: required products or categories ---------- */
+const CATS = [
+  ['Gėrimai',[['Vanduo',['Mineralinis vanduo','Gazuotas vanduo','Negazuotas vanduo']],['Gaivieji gėrimai',['Kolos','Limonadai','Energiniai gėrimai']],['Alus',['Mažųjų daryklų alus','Šviesusis alus','Kvietinis alus','Tamsusis alus']],['Sidras ir kokteiliai',['Sidras','Kokteiliai']]]],
+  ['Užkandžiai',[['Traškučiai',['Bulvių traškučiai','Kukurūzų traškučiai']],['Riešutai ir sėklos',['Riešutai','Sėklos']]]],
+  ['Saldumynai',[['Šokoladas',['Šokolado plytelės','Šokoladiniai batonėliai']],['Sausainiai',['Sviestiniai sausainiai','Avižiniai sausainiai']]]]
+];
+const catKids=n=>!n[1]?null:(typeof n[1][0]==='string'?n[1].map(x=>[x]):n[1]);
+const catLeaves=n=>{const k=catKids(n);return k?k.flatMap(catLeaves):[n[0]]};
+const leavesOf=name=>{let out=null;const walk=n=>{if(out)return;if(n[0]===name){out=catLeaves(n);return}(catKids(n)||[]).forEach(walk)};CATS.forEach(walk);return out||[name]};
+const PRODUCTS=(()=>{const base=[['Traškučiai PRINGLES Original, 165 g','Bulvių traškučiai','PRINGLES'],['Traškučiai PRINGLES Sour Cream & Onion, 165 g','Bulvių traškučiai','PRINGLES'],['Traškučiai PRINGLES Paprika, 165 g','Bulvių traškučiai','PRINGLES'],['Traškučiai PRINGLES Salt & Vinegar, 165 g','Bulvių traškučiai','PRINGLES'],['Traškučiai PRINGLES Hot & Spicy, 165 g','Bulvių traškučiai','PRINGLES'],['Traškučiai LAY\'S su druska, 140 g','Bulvių traškučiai','LAY\'S'],['Traškučiai LAY\'S su paprika, 140 g','Bulvių traškučiai','LAY\'S'],['Kukurūzų traškučiai DORITOS Nacho, 100 g','Kukurūzų traškučiai','DORITOS'],['Gazuotas gėrimas COCA-COLA, 1,5 l','Kolos','COCA-COLA'],['Gazuotas gėrimas COCA-COLA Zero, 1,5 l','Kolos','COCA-COLA'],['Limonadas FANTA apelsinų, 1,5 l','Limonadai','FANTA'],['Mineralinis vanduo VICHY, 1,5 l','Mineralinis vanduo','VICHY'],['Šokolado plytelė KARUMS pieninis, 100 g','Šokolado plytelės','KARUMS'],['Šokolado plytelė MILKA Alpine Milk, 100 g','Šokolado plytelės','MILKA'],['Šokoladinis batonėlis SNICKERS, 50 g','Šokoladiniai batonėliai','SNICKERS'],['Sviestiniai sausainiai SELGA, 180 g','Sviestiniai sausainiai','SELGA'],['Kepinti žemės riešutai ESTRELLA, 175 g','Riešutai','ESTRELLA'],['Saulėgrąžų sėklos SOLO, 200 g','Sėklos','SOLO']];
+  return base.map((b,i)=>({id:i+1,name:b[0],cat:b[1],brand:b[2],matnr:String(110050+i*37).padStart(18,'0')}))})();
+
+function reqRows(){
+  const f=form;
+  const summary=f.reqBy?reqSummary():
+    `<div class="req-btns"><a class="btn btn-white icon" href="${route.split('?')[0]}/products">${I.cart}Assign products</a><span class="or">Or</span>
+      <div class="cat-wrap"><button class="btn btn-white icon" data-catopen>${I.list}Assign categories</button>${f.catOpen?catPopover():''}</div></div>`;
+  const unit=f.reqMetric==='units';
+  return frow('Required products','Products or categories the customer must buy to take part.',`<div id="w-req">${summary}</div>`)
+    +frow('Purchase condition','How much of these products the customer must buy.',
+      `<div class="radios inline">${radioOpt('reqMetric','units',f.reqMetric,'Units','')}${radioOpt('reqMetric','amount',f.reqMetric,'Amount','')}</div>
+       ${tf('reqValue',unit?'Units':'Amount',f.reqValue,{num:true,cls:'narrow',suffix:unit?'units':'€',ph:unit?'e.g. 2':''})}`);
+}
+function reqSummary(){
+  const f=form; const isCat=f.reqBy==='categories';
+  const items=isCat?f.reqCats:f.reqProds.map(id=>PRODUCTS.find(p=>p.id===id).name);
+  const what=isCat?'categories':'products';
+  return `<div class="cat-wrap"><div class="req-card">
+    <button class="rc-head" data-reqtoggle>${f.reqExpanded?I.chevU:I.chevD}<span>Assigned ${what}</span><span class="pill">${items.length}</span></button>
+    ${f.reqExpanded?`<ul class="rc-list">${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+    <div class="rc-foot">${isCat?`<button class="btn btn-white icon btn-sm" data-catopen>${I.pencil}Edit</button>`:`<a class="btn btn-white icon btn-sm" href="${route.split('?')[0]}/products">${I.pencil}Edit</a>`}<button class="link" data-reqclear>Clear all</button></div>
+    ${f.reqConfirm?`<div class="rc-confirm"><div class="rc-ct">${I.warn}<div><b>Clear all ${what}?</b><p>All assigned ${what} will be removed.</p></div></div>
+      <div class="rc-cb"><button class="btn btn-white btn-sm" data-reqcancel>Cancel</button><button class="btn btn-danger btn-sm" data-reqok>Confirm</button></div></div>`:''}
+  </div>${f.catOpen?catPopover():''}</div>`;
+}
+function catPopover(){
+  const f=form; const sel=new Set(f.catDraft||[]); const q=(f.catQ||'').trim().toLowerCase();
+  const node=(n,depth)=>{
+    const kids=catKids(n);
+    const leaves=catLeaves(n);
+    const on=leaves.filter(l=>sel.has(l)).length;
+    const match=!q||n[0].toLowerCase().includes(q)||leaves.some(l=>l.toLowerCase().includes(q));
+    if(!match) return '';
+    const open=q||(f.catExp||[]).includes(n[0]);
+    return `<div class="ct-row" style="padding-left:${depth*20}px">${kids?`<button class="ct-tg" data-catexp="${esc(n[0])}">${open?'−':'+'}</button>`:'<span class="ct-tg"></span>'}
+      <label><input type="checkbox" data-catchk="${esc(n[0])}" ${on&&on===leaves.length?'checked':''} ${on&&on<leaves.length?'data-ind="1"':''}>${esc(n[0])}</label></div>
+      ${kids&&open?kids.map(k=>node(k,depth+1)).join(''):''}`;
+  };
+  return `<div class="popover cat-pop"><div class="input"><input id="catQ" placeholder="Enter category to filter" value="${esc(f.catQ||'')}"></div>
+    <div class="ct-tree">${CATS.map(n=>node(n,0)).join('')}</div>
+    <div class="pop-actions"><button class="link" data-catclear style="margin-right:auto">Clear</button><button class="btn btn-white btn-sm" data-catcancel>Cancel</button><button class="btn btn-primary btn-sm" data-catapply>Apply</button></div></div>`;
+}
+function productsPage(back){
+  const f=form; if(!f.prodDraft) f.prodDraft=[...(f.reqProds||[])];
+  const q=(f.prodQ||'').trim().toLowerCase();
+  const rows=PRODUCTS.filter(p=>!q||(p.name+' '+p.brand+' '+p.matnr+' '+p.cat).toLowerCase().includes(q));
+  const allOn=rows.length&&rows.every(p=>f.prodDraft.includes(p.id));
+  return `<div class="page-header child"><div class="text"><div class="heading"><a href="${back}" aria-label="Back">${I.back}</a><h1>Assign products</h1></div></div>
+    <div class="actions"><button class="btn btn-primary" data-prodok="${back}">Confirm</button></div></div>
+    <div class="filters"><div class="search">${I.search}<input id="prodQ" placeholder="Search by product name, brand, category or MATNR" value="${esc(f.prodQ||'')}"></div></div>
+    <div class="table-wrap"><div class="table-card"><div class="sel-bar">${I.infoS}<span>Select products the customer must buy</span><b>${f.prodDraft.length} items selected</b></div><table>
+    <thead><tr><th style="width:48px"><input type="checkbox" data-prodall ${allOn?'checked':''}></th><th>Product name</th><th>Category</th><th>Brand</th><th class="num">MATNR</th></tr></thead>
+    <tbody>${rows.map(p=>{const on=f.prodDraft.includes(p.id);return `<tr class="${on?'sel':''}"><td><input type="checkbox" data-prod="${p.id}" ${on?'checked':''}></td><td class="strong">${esc(p.name)}</td><td>${esc(p.cat)}</td><td>${esc(p.brand)}</td><td class="num">${p.matnr}</td></tr>`}).join('')||emptyRow(5)}</tbody></table></div></div>`;
+}
+function bindReq(v){
+  const f=form; if(!v) return;
+  v.querySelectorAll('[data-catopen]').forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();f.catOpen=!f.catOpen;f.catDraft=[...(f.reqCats||[])];f.catQ='';f.catExp=f.catExp||['Gėrimai'];render(true)});
+  v.querySelectorAll('[data-catexp]').forEach(b=>b.onclick=e=>{e.preventDefault();const n=b.dataset.catexp;f.catExp=(f.catExp||[]).includes(n)?f.catExp.filter(x=>x!==n):[...(f.catExp||[]),n];render(true)});
+  v.querySelectorAll('[data-catchk]').forEach(c=>{if(c.dataset.ind)c.indeterminate=true;c.onchange=()=>{const ls=leavesOf(c.dataset.catchk);const s=new Set(f.catDraft);const all=ls.every(l=>s.has(l));ls.forEach(l=>all?s.delete(l):s.add(l));f.catDraft=[...s];render(true)}});
+  const cq=document.getElementById('catQ'); if(cq) cq.oninput=()=>{f.catQ=cq.value;const p=cq.selectionStart;render(true);const n=document.getElementById('catQ');n.focus();n.setSelectionRange(p,p)};
+  v.querySelectorAll('[data-catclear]').forEach(b=>b.onclick=e=>{e.preventDefault();f.catDraft=[];render(true)});
+  v.querySelectorAll('[data-catcancel]').forEach(b=>b.onclick=e=>{e.preventDefault();f.catOpen=false;render(true)});
+  v.querySelectorAll('[data-catapply]').forEach(b=>b.onclick=e=>{e.preventDefault();f.reqCats=[...f.catDraft];f.reqBy=f.reqCats.length?'categories':null;f.reqProds=[];f.catOpen=false;f.reqExpanded=false;render(true)});
+  v.querySelectorAll('.cat-pop').forEach(p=>p.onclick=e=>e.stopPropagation());
+  v.querySelectorAll('[data-reqtoggle]').forEach(b=>b.onclick=e=>{e.preventDefault();f.reqExpanded=!f.reqExpanded;render(true)});
+  v.querySelectorAll('[data-reqclear]').forEach(b=>b.onclick=e=>{e.preventDefault();f.reqConfirm=true;render(true)});
+  v.querySelectorAll('[data-reqcancel]').forEach(b=>b.onclick=e=>{e.preventDefault();f.reqConfirm=false;render(true)});
+  v.querySelectorAll('[data-reqok]').forEach(b=>b.onclick=e=>{e.preventDefault();f.reqBy=null;f.reqCats=[];f.reqProds=[];f.reqConfirm=false;render(true)});
+  // products page
+  const pq=document.getElementById('prodQ'); if(pq) pq.oninput=()=>{f.prodQ=pq.value;const p=pq.selectionStart;render(true);const n=document.getElementById('prodQ');n.focus();n.setSelectionRange(p,p)};
+  v.querySelectorAll('[data-prod]').forEach(c=>c.onchange=()=>{const id=+c.dataset.prod;f.prodDraft=c.checked?[...f.prodDraft,id]:f.prodDraft.filter(x=>x!==id);render(true)});
+  v.querySelectorAll('[data-prodall]').forEach(c=>c.onchange=()=>{const q=(f.prodQ||'').trim().toLowerCase();const ids=PRODUCTS.filter(p=>!q||(p.name+' '+p.brand+' '+p.matnr+' '+p.cat).toLowerCase().includes(q)).map(p=>p.id);const s=new Set(f.prodDraft);ids.forEach(id=>c.checked?s.add(id):s.delete(id));f.prodDraft=[...s];render(true)});
+  v.querySelectorAll('[data-prodok]').forEach(b=>b.onclick=e=>{e.preventDefault();f.reqProds=[...f.prodDraft];f.reqBy=f.reqProds.length?'products':null;f.reqCats=[];f.prodDraft=null;f.prodQ='';f.reqExpanded=false;go(b.dataset.prodok)});
+}
+const reqTxt=g=>!g.req?null:(g.req.by==='categories'?'Categories: '+g.req.items.join(', '):g.req.items.length+' products');
+const reqCondTxt=g=>!g.req||!g.req.value?null:(g.req.metric==='units'?'At least '+g.req.value+' units':'At least '+money(g.req.value))+' of these products';
+
+
 /* ---------- Form building blocks ---------- */
 // Left: what is decided + short explanation. Right: the control.
 const frow=(title,desc,control,cls='')=>`<div class="frow ${cls}"><div class="fl"><div class="t">${title}</div>${desc?`<div class="s">${desc}</div>`:''}</div><div class="fr">${control}</div></div>`;
@@ -802,14 +926,16 @@ function discountRows(){
     return frow('Discount','Cannot be changed after creation.',
         `<div class="pair">${tf('typeRo','Type',TYPE[f.type],{ro:true,cls:'narrow'})}${hasValue(f.type)?tf('valueRo','Value',valueTxt(f),{ro:true,cls:'narrow'}):''}</div>`)
       +frow('Cart requirements',cartDesc,
-        `<div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true,cls:'narrow'})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow'}):''}</div>`);
+        `<div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true,cls:'narrow'})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow'}):''}</div>`)
+      +(f.type==='lottery'?reqRows():'');
   }
   const types=Object.entries(TYPE).filter(([k])=>isCode||k!=='lottery');
   return frow('Discount','How the discount is applied to the basket.',
       `<div class="pair">${sel('type','Type',f.type,types,'','narrow')}${hasValue(f.type)?tf('value','Value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}</div>`)
     +frow('Cart requirements',cartDesc,
       `<div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true,cls:'narrow'})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow',hint:'Optional'}):''}</div>
-       ${f.type==='pct'?'<span class="help">The discount is calculated up to the maximum basket.</span>':''}`);
+       ${f.type==='pct'?'<span class="help">The discount is calculated up to the maximum basket.</span>':''}`)
+    +(f.type==='lottery'?reqRows():'');
 }
 
 function stepper(id,label,val,{suffix,min=0,max=99}={}){
@@ -972,6 +1098,7 @@ function bind(){
   v.querySelectorAll('[data-aud]').forEach(b=>b.onclick=e=>{e.preventDefault();sheet={open:true,pop:null,key:b.dataset.aud,draft:JSON.parse(JSON.stringify(form[b.dataset.aud]||{}))};renderSheet()});
   v.querySelectorAll('[data-audclear]').forEach(b=>b.onclick=e=>{e.preventDefault();form[b.dataset.audclear]={};render(true)});
   v.querySelectorAll('[data-step]').forEach(b=>b.onclick=e=>{e.preventDefault();const [k,d,mn,mx]=b.dataset.step.split(':');form[k]=Math.min(+mx,Math.max(+mn,(parseInt(form[k])||0)+(+d)));render(true)});
+  bindReq(v);
   const cc=document.getElementById('checkCode'); if(cc) cc.onclick=e=>{e.preventDefault();form.checked=String(form.code||'').trim().toUpperCase();render(true)};
   const s=document.getElementById('submit'); if(s) s.onclick=submit;
 }
@@ -982,11 +1109,14 @@ function submit(){
   if(!String(f.desc||'').trim()) return err('desc','Enter an internal description.');
   if(!String(f.customer||'').trim()) return err('customer','Enter the text for customers.');
   if(!f.edit && hasValue(f.type) && (f.value===''||f.value==null)) return err('value','Enter the discount value.');
+  if(f.kind==='code' && f.type==='lottery' && !f.reqBy) return err('req','Assign products or categories.');
+  if(f.kind==='code' && f.type==='lottery' && !String(f.reqValue||'').trim()) return err('reqValue',f.reqMetric==='units'?'Enter the number of units.':'Enter the amount.');
+  const reqObj=f.type==='lottery'&&f.reqBy?{by:f.reqBy,items:f.reqBy==='categories'?[...f.reqCats]:f.reqProds.map(id=>PRODUCTS.find(p=>p.id===id).name),ids:[...f.reqProds],metric:f.reqMetric,value:parseFloat(String(f.reqValue).replace(',','.'))}:null;
   if(f.kind==='code' && !f.edit && f.dist==='shared' && f.cmode==='custom' && !String(f.code||'').trim()) return err('code','Enter the code.');
   const num=x=>x===''||x==null?null:parseFloat(String(x).replace(',','.'));
   if(f.edit){
     const arr=f.kind==='code'?groups:programs; const rec=arr.find(x=>x.id===f.id);
-    Object.assign(rec,{name:f.name,desc:f.desc,customer:f.customer||'',min:num(f.min),max:num(f.max),from:f.from,to:f.to,app:!!f.app,unlimited:!!f.unlimited});
+    Object.assign(rec,f.kind==='code'&&rec.type==='lottery'?{req:reqObj}:{},{name:f.name,desc:f.desc,customer:f.customer||'',min:num(f.min),max:num(f.max),from:f.from,to:f.to,app:!!f.app,unlimited:!!f.unlimited});
     form._key=null; go((f.kind==='code'?'#/groups/':'#/programs/')+rec.id); toast('Changes saved.'); return;
   }
   if(f.kind==='program'){
@@ -999,7 +1129,7 @@ function submit(){
   const total=f.dist==='segment'?audC:f.dist==='excel'?120:f.dist==='shared'?1:Math.max(1,parseInt(f.count)||1);
   const create=()=>{
     const id=Math.max(...groups.map(g=>g.id))+1;
-    const g={id,name:f.name,type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),from:f.from,to:f.to,dist:f.dist,segment:f.dist==='segment'?audSummary(f.aud):null,total,used:0,prefix:f.dist==='shared'?sharedCode:String(f.prefix||'').toUpperCase(),len:f.dist==='shared'?0:parseInt(f.len)||6,desc:f.desc,customer:f.customer||'',app:!!f.app,unlimited:!!f.unlimited,disabled:false,created:TODAY};
+    const g={id,req:reqObj,name:f.name,type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),from:f.from,to:f.to,dist:f.dist,segment:f.dist==='segment'?audSummary(f.aud):null,total,used:0,prefix:f.dist==='shared'?sharedCode:String(f.prefix||'').toUpperCase(),len:f.dist==='shared'?0:parseInt(f.len)||6,desc:f.desc,customer:f.customer||'',app:!!f.app,unlimited:!!f.unlimited,disabled:false,created:TODAY};
     groups.unshift(g); codes.push(...sampleCodes(g)); form._key=null; go('#/groups/'+id);
     toast(f.dist==='unassigned'?nf(total)+' codes created. The Excel file is downloading.':nf(total)+(total===1?' code':' codes')+' created.');
   };
