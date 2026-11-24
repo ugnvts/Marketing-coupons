@@ -825,7 +825,7 @@ function codeFormatRow(){
       ${radioOpt('cmode','custom',f.cmode,'Custom code','Enter the exact code, e.g. PUPELE')}
       ${radioOpt('cmode','generated',f.cmode,'Generated code','Prefix and random characters')}
     </div>`:'')
-    +(custom?tf('code','Code',f.code,{ph:'e.g. PUPELE',help:'Each customer can use the code once.'})+codeCheck():gen);
+    +(custom?tf('code','Code',f.code,{ph:'e.g. PUPELE'})+codeCheck():gen);
   return frow('Code format',f.dist==='shared'?'The code all customers will enter.':'Every code gets a unique random part.',ctrl);
 }
 
