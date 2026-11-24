@@ -786,14 +786,14 @@ function discountRows(){
   const cartDesc='Alcohol, infant formula and (LV) energy drinks are not counted.';
   if(f.edit){
     return frow('Discount','Cannot be changed after creation.',
-        `${tf('typeRo','Type',TYPE[f.type],{ro:true})}${hasValue(f.type)?tf('valueRo','Value',valueTxt(f),{ro:true,cls:'narrow'}):''}`)
+        `<div class="pair">${tf('typeRo','Type',TYPE[f.type],{ro:true,cls:'narrow'})}${hasValue(f.type)?tf('valueRo','Value',valueTxt(f),{ro:true,cls:'narrow'}):''}</div>`)
       +frow('Cart requirements',cartDesc,
         `<div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true,cls:'narrow'})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow'}):''}</div>`);
   }
   const types=Object.entries(TYPE).filter(([k])=>isCode||k!=='lottery');
   return frow('Discount','How the discount is applied to the basket.',
-      `${sel('type','Type',f.type,types,f.type==='lottery'?'Customer takes part in a draw. Conditions will be added later.':'')}
-      ${hasValue(f.type)?tf('value','Value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}`)
+      `<div class="pair">${sel('type','Type',f.type,types,'','narrow')}${hasValue(f.type)?tf('value','Value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}</div>
+      ${f.type==='lottery'?'<span class="help" style="margin-top:-12px">Customer takes part in a draw. Conditions will be added later.</span>':''}`)
     +frow('Cart requirements',cartDesc,
       `<div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true,cls:'narrow'})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow',hint:'Optional'}):''}</div>
        <span class="help">Barbora's minimum order is 19,99 €.${f.type==='pct'?' The discount is calculated up to the maximum basket.':''}</span>`);
