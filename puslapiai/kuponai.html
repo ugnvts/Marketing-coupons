@@ -224,6 +224,13 @@ td.act{width:56px;padding:8px 16px;text-align:right;position:relative}
 .pill{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--indigo-100);color:var(--indigo-700);font-size:12px;font-weight:500}
 .link{background:none;border:0;padding:0;color:var(--indigo-600);font-weight:500;cursor:pointer}
 .link:hover{color:var(--indigo-800)}
+.link:disabled{color:var(--gray-400);cursor:default}
+.chk-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:-8px}
+.chk{display:inline-flex;align-items:center;gap:6px}
+.chk svg{width:16px;height:16px;flex-shrink:0}
+.chk.ok{color:var(--green-700,#15803d)}
+.chk.bad{color:var(--red-600)}
+.chk a{color:inherit;text-decoration:underline}
 .btn-sm{padding:5px 11px}
 #sheet .sheet-bg{position:fixed;inset:0;background:rgba(107,114,128,.75);z-index:45}
 #sheet .sheet{position:fixed;top:0;right:0;bottom:0;width:640px;max-width:100%;background:#fff;z-index:46;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
@@ -792,13 +799,22 @@ function discountRows(){
   }
   const types=Object.entries(TYPE).filter(([k])=>isCode||k!=='lottery');
   return frow('Discount','How the discount is applied to the basket.',
-      `<div class="pair">${sel('type','Type',f.type,types,'','narrow')}${hasValue(f.type)?tf('value','Value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}</div>
-      ${f.type==='lottery'?'<span class="help" style="margin-top:-12px">Customer takes part in a draw. Conditions will be added later.</span>':''}`)
+      `<div class="pair">${sel('type','Type',f.type,types,'','narrow')}${hasValue(f.type)?tf('value','Value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}</div>`)
     +frow('Cart requirements',cartDesc,
       `<div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true,cls:'narrow'})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow',hint:'Optional'}):''}</div>
-       <span class="help">Barbora's minimum order is 19,99 €.${f.type==='pct'?' The discount is calculated up to the maximum basket.':''}</span>`);
+       ${f.type==='pct'?'<span class="help">The discount is calculated up to the maximum basket.</span>':''}`);
 }
 
+function codeCheck(){
+  const f=form; const c=String(f.code||'').trim().toUpperCase();
+  let res='';
+  if(f.checked!=null && f.checked===c){
+    const hit=groups.find(g=>g.dist==='shared' && String(g.prefix).toUpperCase()===c);
+    res=hit?`<span class="chk bad">${I.warn}<span>Already used in “<a href="#/groups/${hit.id}">${esc(hit.name)}</a>”</span></span>`
+           :`<span class="chk ok">${I.check}<span>${esc(c)} is available</span></span>`;
+  }
+  return `<div class="chk-row"><button class="link" id="checkCode" ${c?'':'disabled'}>Check availability</button>${res}</div>`;
+}
 function codeFormatRow(){
   const f=form;
   const custom=f.dist==='shared' && f.cmode==='custom';
@@ -809,7 +825,7 @@ function codeFormatRow(){
       ${radioOpt('cmode','custom',f.cmode,'Custom code','Enter the exact code, e.g. PUPELE')}
       ${radioOpt('cmode','generated',f.cmode,'Generated code','Prefix and random characters')}
     </div>`:'')
-    +(custom?tf('code','Code',f.code,{ph:'e.g. PUPELE',help:'Each customer can use the code once. Check that the code is not used yet.'}):gen);
+    +(custom?tf('code','Code',f.code,{ph:'e.g. PUPELE',help:'Each customer can use the code once.'})+codeCheck():gen);
   return frow('Code format',f.dist==='shared'?'The code all customers will enter.':'Every code gets a unique random part.',ctrl);
 }
 
@@ -853,12 +869,7 @@ function formPage(kind,rec){
       inner+=sec('Distribution',`${vrow('How codes are given',DIST[f.dist].t+(f.segment?' <span class="note">· '+esc(f.segment)+'</span>':''))}${f.dist==='shared'?vrow('Code','<span class="code">'+esc(f.prefix)+'</span>'):vrow('Codes',nf(f.total)+' · prefix <span class="code">'+esc(f.prefix)+'</span>')}`,'Codes cannot be changed after they are created.');
     } else {
       let rows=frow('Who gets the codes','Unique codes are personal. A shared code is the same for everyone.',
-        `<div class="radios">
-          ${radioOpt('dist','segment',f.dist,'Customers by audience filters','A personal code for every customer who matches the filters.')}
-          ${radioOpt('dist','excel',f.dist,'Customers from a file','A personal code for every email in the file.')}
-          ${radioOpt('dist','shared',f.dist,'Everyone – one shared code','The same code for everyone, e.g. for a lottery or a public campaign.')}
-          ${radioOpt('dist','unassigned',f.dist,'Codes without customers','Handed out later, e.g. customer service compensations or flyers.')}
-        </div>`);
+        sel('dist','Recipients',f.dist,[['segment','Customers by audience filters'],['excel','Customers from a file'],['shared','Everyone – one shared code'],['unassigned','Codes without customers']]));
       if(f.dist==='segment') rows+=frow('Target audience','Define which customers get a code.',audienceControl('aud',true));
       if(f.dist==='excel') rows+=frow('Customer list','An .xlsx file with one customer email per row.',`<div class="dropzone"><b>Upload a file</b> or drag and drop</div>`);
       if(f.dist==='unassigned') rows+=frow('Number of codes','An Excel file with the codes downloads after creation.',tf('count','Codes',f.count,{num:true,cls:'narrow'}));
@@ -942,12 +953,13 @@ function bind(){
     form[r.name]=r.value; if(r.name==='dist'&&r.value!=='shared') form.cmode='custom'; render(true)});
   v.querySelectorAll('[data-k]').forEach(i=>{
     if(i.type==='checkbox'){i.onchange=()=>{form[i.dataset.k]=i.checked;render(true)};return}
-    const rerender=['segment','prefix','len','value','min','audience','type'].includes(i.dataset.k);
+    const rerender=['segment','prefix','len','value','min','audience','type','dist','code'].includes(i.dataset.k);
     const ev=i.tagName==='SELECT'?'onchange':'oninput';
     i[ev]=()=>{form[i.dataset.k]=i.value; if(rerender){const id=i.id,pos=i.selectionStart;render(true);const n=document.getElementById(id);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}};
   });
   v.querySelectorAll('[data-aud]').forEach(b=>b.onclick=e=>{e.preventDefault();sheet={open:true,pop:null,key:b.dataset.aud,draft:JSON.parse(JSON.stringify(form[b.dataset.aud]||{}))};renderSheet()});
   v.querySelectorAll('[data-audclear]').forEach(b=>b.onclick=e=>{e.preventDefault();form[b.dataset.audclear]={};render(true)});
+  const cc=document.getElementById('checkCode'); if(cc) cc.onclick=e=>{e.preventDefault();form.checked=String(form.code||'').trim().toUpperCase();render(true)};
   const s=document.getElementById('submit'); if(s) s.onclick=submit;
 }
 function submit(){
