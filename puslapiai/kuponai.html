@@ -220,6 +220,8 @@ td.act{width:56px;padding:8px 16px;text-align:right;position:relative}
 .frow .fr .pair .f.narrow .help{width:auto}
 .frow .counter{width:100%}
 .counter.warn{background:var(--yellow-50,#fefce8);border-color:#fde68a;color:#92400e}
+.count-line{display:flex;align-items:center;gap:8px;color:var(--gray-700)}
+.count-line svg{color:var(--gray-400)}
 .aud-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .pill{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--indigo-100);color:var(--indigo-700);font-size:12px;font-weight:500}
 .link{background:none;border:0;padding:0;color:var(--indigo-600);font-weight:500;cursor:pointer}
@@ -796,10 +798,7 @@ function audienceControl(key,forCodes){
   const btn=n
     ? `<button class="btn btn-white icon" data-aud="${key}">${I.funnel}Adjust filters <span class="pill">${n}</span></button><button class="link" data-audclear="${key}">Clear all</button>`
     : `<button class="btn btn-white icon" data-aud="${key}">${I.funnel}Set up audience</button>`;
-  const cnt=forCodes
-    ? (n?`<div class="counter">${I.users}<span><b>${nf(c)}</b> customers – one code each</span></div>`
-        :`<div class="counter warn">${I.users}<span>No filters: codes will be created for <b>all ${nf(c)}</b> customers</span></div>`)
-    : `<div class="counter">${I.users}<span><b>${nf(c)}</b> customers match now</span></div>`;
+  const cnt=`<div class="count-line">${I.users}<span>${nf(c)} ${forCodes?'codes':'customers'}</span></div>`;
   return `<div class="aud-row">${btn}</div>${cnt}`;
 }
 function renderSheet(){
