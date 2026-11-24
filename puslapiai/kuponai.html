@@ -618,6 +618,11 @@ function groupView(g){
       <div class="stat"><span class="lbl">Used</span><span class="v">${usedTxt}</span></div>
       <div class="stat"><span class="lbl">Valid until</span><span class="v" style="font-size:18px;line-height:32px">${left}</span></div>
     </div>
+    ${sec('Names and texts',
+      vrow('Name (internal)',esc(g.name))+
+      vrow('Internal description',esc(g.desc)||'—')+
+      vrow('Text for customers',esc(g.customer))+
+      vrow('Created',fmtD(g.created)))}
     ${sec('Discount',
       vrow('Type',TYPE[g.type])+
       (g.type!=='free'?vrow('Value',valueTxt(g)):'')+
@@ -631,11 +636,6 @@ function groupView(g){
     ${sec('Distribution',
       vrow('How codes are given',DIST[g.dist].t+(g.segment?' <span class="note">· '+esc(g.segment)+'</span>':''))+
       (g.dist==='shared'?vrow('Code','<span class="code">'+esc(g.prefix)+'</span>'):vrow('Codes',nf(g.total)+' <span class="note">· prefix <span class="code">'+esc(g.prefix)+'</span> + '+g.len+' characters</span>')))}
-    ${sec('Names and texts',
-      vrow('Name (internal)',esc(g.name))+
-      vrow('Internal description',esc(g.desc)||'—')+
-      vrow('Text for customers',esc(g.customer))+
-      vrow('Created',fmtD(g.created)))}
   </div></div>
   <div class="full-head"><div class="sec-head"><div class="bar-row"><h2>${g.dist==='shared'?'Redemptions':'Codes and redemptions'}</h2>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="search">${I.search}<input id="gq" data-group="${g.id}" placeholder="Search by code or customer email" value="${esc(state.gq||'')}"></div><button class="btn btn-white icon" data-toast="Export started.">${I.download}Export</button></div></div><hr></div></div>
@@ -652,6 +652,7 @@ function programView(p){
       <div class="stat"><span class="lbl">Program type</span><span class="v" style="font-size:18px">${PKIND[p.kind]}</span></div>
       <div class="stat"><span class="lbl">Participants</span><span class="v" style="font-size:18px">${esc(p.audience)}</span></div>
     </div>
+    ${sec('Names and texts',vrow('Name (internal)',esc(p.name))+vrow('Internal description',esc(p.desc)||'—')+vrow('Text for customers',esc(p.customer)))}
     ${sec('Condition',
       vrow('Customer gets a coupon',p.kind==='new'?'When they register (no orders yet)':p.kind==='business'?'Right away, no condition':'After '+condTxt(p))+
       (p.kind==='accumulative'?vrow('Counted orders','Orders with status Delivered or later'):''))}
@@ -662,7 +663,6 @@ function programView(p){
     ${sec('Program period',
       vrow('Issues coupons',fmtD(p.from)+' – '+fmtD(addDays(p.to,-1))+' <span class="note">· stops at 00:00 on '+fmtD(p.to)+'</span>')+
       vrow('Issued coupons after the end','Stay valid until their own end date'))}
-    ${sec('Names and texts',vrow('Name (internal)',esc(p.name))+vrow('Internal description',esc(p.desc)||'—')+vrow('Text for customers',esc(p.customer)))}
   </div></div>`;
 }
 
