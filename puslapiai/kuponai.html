@@ -838,8 +838,8 @@ function formPage(kind,rec){
   inner+=fsec('Names and texts',
     `${tf('name','Name',f.name,{cls:'full',ph:isCode?'e.g. KAC 2026 11 24 5 EUR':'',help:'Internal, customers do not see it.'})}
      <div class="pair">
-       <div class="f"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" ${isCode?'placeholder="Why the codes are created, e.g. the complaint reason"':''}>${esc(f.desc)}</textarea></div></div>
-       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label><span class="hint">Optional</span></div><div class="input"><textarea id="customer" data-k="customer" placeholder="e.g. Dėkojame, kad perkate.">${esc(f.customer)}</textarea></div></div>
+       <div class="f"><div class="lbl-row"><label for="desc">Internal description</label></div><div class="input" id="w-desc"><textarea id="desc" data-k="desc" ${isCode?'placeholder="Why the codes are created, e.g. the complaint reason"':''}>${esc(f.desc)}</textarea></div></div>
+       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label></div><div class="input" id="w-customer"><textarea id="customer" data-k="customer" placeholder="e.g. Dėkojame, kad perkate.">${esc(f.customer)}</textarea></div></div>
      </div>`);
 
   if(isCode){
@@ -953,8 +953,10 @@ function bind(){
 function submit(){
   const f=form;
   const err=(id,msg)=>{const w=document.getElementById('w-'+id);if(w){w.classList.add('err');let h=document.getElementById('h-'+id);if(!h){h=document.createElement('span');h.id='h-'+id;w.after(h)}h.className='help err';h.textContent=msg;w.scrollIntoView({block:'center',behavior:'smooth'})}};
-  if(!f.edit && hasValue(f.type) && (f.value===''||f.value==null)) return err('value','Enter the discount value.');
   if(!String(f.name||'').trim()) return err('name','Enter a name.');
+  if(!String(f.desc||'').trim()) return err('desc','Enter an internal description.');
+  if(!String(f.customer||'').trim()) return err('customer','Enter the text for customers.');
+  if(!f.edit && hasValue(f.type) && (f.value===''||f.value==null)) return err('value','Enter the discount value.');
   if(f.kind==='code' && !f.edit && f.dist==='shared' && f.cmode==='custom' && !String(f.code||'').trim()) return err('code','Enter the code.');
   const num=x=>x===''||x==null?null:parseFloat(String(x).replace(',','.'));
   if(f.edit){
