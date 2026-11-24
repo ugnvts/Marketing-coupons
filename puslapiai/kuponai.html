@@ -719,8 +719,8 @@ function tf(id,label,val,{hint,help,suffix,num,ph,cls='',type='text',ro}={}){
     <div class="input ${num?'num':''} ${ro?'ro':''}" id="w-${id}"><input id="${id}" data-k="${id}" type="${type}" value="${esc(val??'')}" ${ph?`placeholder="${esc(ph)}"`:''} ${ro?'readonly':''}>${suffix?`<span class="suffix">${suffix}</span>`:''}</div>
     ${help?`<span class="help" id="h-${id}">${help}</span>`:''}</div>`;
 }
-function sel(id,label,val,opts,help){
-  return `<div class="f"><div class="lbl-row"><label for="${id}">${label}</label></div><div class="input"><select id="${id}" data-k="${id}">${opts.map(([v,t])=>`<option value="${esc(v)}" ${String(v)===String(val)?'selected':''}>${esc(t)}</option>`).join('')}</select></div>${help?`<span class="help">${help}</span>`:''}</div>`;
+function sel(id,label,val,opts,help,cls=''){
+  return `<div class="f ${cls}"><div class="lbl-row"><label for="${id}">${label}</label></div><div class="input"><select id="${id}" data-k="${id}">${opts.map(([v,t])=>`<option value="${esc(v)}" ${String(v)===String(val)?'selected':''}>${esc(t)}</option>`).join('')}</select></div>${help?`<span class="help">${help}</span>`:''}</div>`;
 }
 const fsec=(title,inner,sub,cls='')=>`<div class="section"><div class="sec-head"><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}<hr></div><div class="fields ${cls}">${inner}</div></div>`;
 const segOpts=()=>SEGMENTS.map(([n,c])=>[n,n+' ('+nf(c)+')']);
@@ -848,7 +848,7 @@ function formPage(kind,rec){
       frow('Valid','By delivery date. The code works on both dates.',
         `<div class="pair">${tf('from','From',f.from,{type:'date',cls:'narrow'})}${tf('to','To',f.to,{type:'date',cls:'narrow'})}</div>
          <label class="check"><input type="checkbox" data-k="hours" ${f.hours?'checked':''}><span><span class="t">Limit to delivery hours</span><br><span class="s">Rarely used. By default the code works for all delivery slots.</span></span></label>
-         ${f.hours?`<div class="pair">${sel('hFrom','From',f.hFrom,[...Array(24).keys()].map(h=>[h,h+':00']))}${sel('hTo','To',f.hTo,[...Array(24).keys()].map(h=>[h,h+':00']))}</div>`:''}`),null,'rows');
+         ${f.hours?`<div class="pair">${sel('hFrom','From',f.hFrom,[...Array(24).keys()].map(h=>[h,h+':00']),'','narrow')}${sel('hTo','To',f.hTo,[...Array(24).keys()].map(h=>[h,h+':00']),'','narrow')}</div>`:''}`),null,'rows');
     if(f.edit){
       inner+=sec('Distribution',`${vrow('How codes are given',DIST[f.dist].t+(f.segment?' <span class="note">· '+esc(f.segment)+'</span>':''))}${f.dist==='shared'?vrow('Code','<span class="code">'+esc(f.prefix)+'</span>'):vrow('Codes',nf(f.total)+' · prefix <span class="code">'+esc(f.prefix)+'</span>')}`,'Codes cannot be changed after they are created.');
     } else {
