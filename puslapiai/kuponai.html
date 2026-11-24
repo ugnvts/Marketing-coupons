@@ -846,7 +846,7 @@ function reqRows(){
   return frow('Required products','Products or categories the customer must buy to take part.',`<div id="w-req">${summary}</div>`)
     +frow('Purchase condition','How much of these products the customer must buy.',
       `<div class="radios inline">${radioOpt('reqMetric','units',f.reqMetric,'Units','')}${radioOpt('reqMetric','amount',f.reqMetric,'Amount','')}</div>
-       ${tf('reqValue',unit?'Units':'Amount',f.reqValue,{num:true,cls:'narrow',suffix:unit?'units':'€',ph:unit?'e.g. 2':''})}`);
+       ${unit?stepper('reqValue','Units',f.reqValue,{suffix:'units',min:1,max:99}):tf('reqValue','Amount',f.reqValue,{num:true,cls:'narrow',suffix:'€'})}`);
 }
 function reqSummary(){
   const f=form; const isCat=f.reqBy==='categories';
