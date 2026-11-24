@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coupons – prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#fff;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;
+  --gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;
+  --indigo-50:#eef2ff;--indigo-100:#e0e7ff;--indigo-500:#6366f1;--indigo-600:#4f46e5;--indigo-700:#4338ca;--indigo-800:#3730a3;
+  --green-50:#ecfdf5;--green-100:#d1fae5;--green-400:#34d399;--green-600:#059669;--green-800:#065f46;
+  --red-50:#fef2f2;--red-100:#fee2e2;--red-400:#f87171;--red-600:#dc2626;--red-700:#b91c1c;--red-800:#991b1b;
+  --yellow-100:#fef3c7;--yellow-800:#92400e;
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-400:#60a5fa;--blue-700:#1d4ed8;--blue-800:#1e40af;
+  --shadow-sm:0 1px 2px 0 rgba(0,0,0,.05);
+  --shadow-base:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px 0 rgba(0,0,0,.06);
+  --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -2px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:20px;color:var(--gray-900);background:var(--gray-100);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+svg{display:block;flex-shrink:0}
+
+/* Shell */
+.app{display:flex;min-height:100vh}
+.sidebar{width:256px;flex-shrink:0;background:var(--gray-800);position:sticky;top:0;height:100vh;overflow:auto}
+.sidebar .logo{height:64px;background:var(--gray-900);display:flex;align-items:center;justify-content:center;padding:0 16px}
+.sidebar .logo svg{width:208px;height:45px}
+.nav{padding:16px 8px;display:flex;flex-direction:column;gap:4px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:8px 12px 8px 8px;border-radius:6px;color:var(--gray-300);font-weight:500}
+.nav-item svg{color:var(--gray-400)}
+.nav-item .grow{flex:1}
+.nav-sub{padding:8px;border-radius:6px;color:var(--gray-400);font-weight:500}
+.nav-sub.active{background:var(--gray-900);color:var(--white)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;background:var(--white);display:flex;align-items:center;justify-content:flex-end;gap:24px;padding:0 32px;flex-shrink:0}
+.topbar .tb-link{height:64px;display:flex;align-items:center;color:var(--gray-500);font-weight:500;border-bottom:2px solid transparent;padding:0 4px}
+.topbar .tb-link.active{color:var(--gray-900);border-bottom-color:#dc2626}
+.topbar .avatar{width:32px;height:32px;border-radius:50%;background:#b91c1c;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500}
+.content{padding:24px 0 32px}
+
+/* Header */
+.page-header{display:flex;align-items:flex-start;gap:16px;padding:0 32px 16px}
+.page-header .text{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.page-header h1{margin:0;font-size:24px;line-height:32px;font-weight:700;word-break:break-word}
+.page-header .meta{display:flex;gap:24px;color:var(--gray-500);font-weight:500;flex-wrap:wrap}
+.page-header .meta b{color:var(--gray-900);font-weight:500}
+.page-header .meta span{display:flex;align-items:center;gap:8px}
+.page-header.child .text{padding-top:8px}
+.crumbs{display:flex;align-items:center;gap:16px;color:var(--gray-500);font-weight:500}
+.crumbs a:hover{color:var(--gray-700)}
+.crumbs svg{color:var(--gray-400)}
+.heading{display:flex;align-items:center;gap:16px}
+.heading a{color:var(--gray-500)}
+.actions{display:flex;gap:8px;flex-shrink:0}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:6px;padding:9px 17px;font-weight:500;line-height:20px;border:1px solid transparent;box-shadow:var(--shadow-sm);white-space:nowrap}
+.btn.icon{padding-left:15px}
+.btn-primary{background:var(--indigo-600);color:#fff}
+.btn-primary:hover{background:var(--indigo-700)}
+.btn-white{background:#fff;border-color:var(--gray-300);color:var(--gray-700)}
+.btn-white:hover{background:var(--gray-50)}
+.btn-red{background:var(--red-100);color:var(--red-700);box-shadow:none}
+.btn-red:hover{background:#fecaca}
+.btn-green{background:var(--green-100);color:var(--green-800);box-shadow:none}
+.btn-icon{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:var(--gray-400)}
+.btn-icon:hover{background:var(--gray-100);color:var(--gray-600)}
+
+/* Tabs */
+.tabs{display:flex;gap:32px;margin:0 32px;border-bottom:1px solid var(--gray-200);height:54px;align-items:stretch}
+.tab{display:flex;align-items:center;gap:8px;color:var(--gray-500);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;padding:0 4px}
+.tab:hover{color:var(--gray-700);border-bottom-color:var(--gray-300)}
+.tab.active{color:var(--indigo-600);border-bottom-color:var(--indigo-600)}
+.count{background:var(--gray-100);color:var(--gray-600);border-radius:10px;padding:0 8px;font-size:12px;line-height:20px;font-weight:500}
+.tab.active .count{background:var(--indigo-100);color:var(--indigo-600)}
+
+/* Filters */
+.filters{display:flex;align-items:center;gap:8px;padding:8px 32px;flex-wrap:wrap}
+.filters > svg{color:var(--gray-500);margin-right:0}
+.chip-wrap{position:relative}
+.chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--gray-300);border-radius:6px;padding:8px 16px;font-weight:500;color:var(--gray-700);box-shadow:var(--shadow-sm)}
+.chip:hover{background:var(--gray-50)}
+.chip.on{border-color:var(--indigo-600);color:var(--indigo-700);background:var(--indigo-50)}
+.chip .val{color:var(--gray-900)}
+.popover{position:absolute;top:46px;left:0;z-index:30;width:280px;background:#fff;border-radius:6px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-200);padding:12px}
+.popover .opt{display:flex;align-items:center;gap:12px;padding:6px 4px;color:var(--gray-700);cursor:pointer}
+.popover .pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-200)}
+.search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--gray-300);border-radius:6px;padding:8px 12px;width:360px;box-shadow:var(--shadow-sm)}
+.search svg{color:var(--gray-400)}
+.search input{border:0;outline:0;flex:1;min-width:0;background:transparent}
+.search:focus-within{border-color:var(--indigo-500);box-shadow:0 0 0 1px var(--indigo-500)}
+.clear-link{color:var(--indigo-600);font-weight:500;background:none;border:0;padding:8px}
+
+/* Table */
+.table-wrap{padding:8px 32px 0}
+.table-card{background:#fff;border:1px solid var(--gray-200);border-radius:8px;box-shadow:var(--shadow-sm);overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:var(--gray-50);text-align:left;padding:12px 24px;font-size:12px;line-height:16px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--gray-500);white-space:nowrap;border-bottom:1px solid var(--gray-200)}
+td{padding:16px 24px;border-bottom:1px solid var(--gray-200);color:var(--gray-500);white-space:nowrap;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--gray-50)}
+td.num,th.num{text-align:right}
+td.strong{color:var(--gray-900)}
+td a.link,.link{color:var(--indigo-600)}
+td a.link:hover,.link:hover{color:var(--indigo-800);text-decoration:underline}
+td .sub{font-size:12px;line-height:16px;color:var(--gray-400)}
+td.wrap{white-space:normal;min-width:220px}
+td.act{width:56px;padding:8px 16px;text-align:right;position:relative}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--gray-900)}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:16px 32px 0;color:var(--gray-500);font-weight:500}
+.pagination .mid{color:var(--gray-700)}
+.pagination .mid b{color:var(--indigo-600);font-weight:500}
+.pagination span.pg{display:flex;align-items:center;gap:12px}
+.pagination .dis{color:var(--gray-400)}
+.progress{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.bar{width:80px;height:4px;border-radius:2px;background:var(--gray-200);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--indigo-500)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:10px;padding:2px 10px;font-size:12px;line-height:16px;font-weight:500;white-space:nowrap}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8}
+.badge.plain::before{display:none}
+.b-green{background:var(--green-100);color:var(--green-800)}
+.b-gray{background:var(--gray-100);color:var(--gray-700)}
+.b-red{background:var(--red-100);color:var(--red-800)}
+.b-yellow{background:var(--yellow-100);color:var(--yellow-800)}
+.b-blue{background:var(--blue-100);color:var(--blue-800)}
+.b-indigo{background:var(--indigo-100);color:var(--indigo-800)}
+
+/* Menu */
+.menu{position:absolute;right:16px;top:44px;z-index:30;background:#fff;border-radius:6px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-200);min-width:180px;padding:4px 0;text-align:left}
+.menu a,.menu button{display:block;width:100%;text-align:left;padding:8px 16px;color:var(--gray-700);background:none;border:0}
+.menu a:hover,.menu button:hover{background:var(--gray-100);color:var(--gray-900)}
+.menu .danger{color:var(--red-700)}
+
+/* Cards (view + form) */
+.center{display:flex;justify-content:center;padding:8px 32px 0}
+.card{width:896px;max-width:100%;background:#fff;border-radius:8px;box-shadow:var(--shadow-base);padding:32px;display:flex;flex-direction:column;gap:32px}
+.stats{display:flex;gap:32px;flex-wrap:wrap}
+.stat{width:256px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:20px 24px;display:flex;flex-direction:column;gap:4px}
+.stat .lbl{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--gray-500)}
+.stat .v{font-size:24px;line-height:32px;font-weight:600;color:var(--gray-900)}
+.stat .v small{font-size:14px;font-weight:500;color:var(--gray-500)}
+.section{display:flex;flex-direction:column}
+.sec-head{display:flex;flex-direction:column;gap:8px}
+.sec-head h2{margin:0;font-size:18px;line-height:24px;font-weight:500;color:var(--gray-900)}
+.sec-head p{margin:0;color:var(--gray-500)}
+.sec-head hr{border:0;height:1px;background:var(--gray-200);margin:0;width:100%}
+.row{display:flex;gap:24px;padding:16px 0;border-bottom:1px solid var(--gray-200);align-items:flex-start}
+.row .k{width:261px;flex-shrink:0;color:var(--gray-500);font-weight:500}
+.row .d{flex:1;color:var(--gray-900);min-width:0;word-break:break-word}
+.row .d .note{color:var(--gray-500)}
+.full-head{padding:24px 32px 0}
+.full-head .sec-head{gap:20px}
+.full-head .bar-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+
+/* Form */
+.fields{display:flex;flex-direction:column;gap:24px;padding-top:24px}
+.f{display:flex;flex-direction:column;gap:4px;width:404px;max-width:100%}
+.f.full{width:100%}
+.f.narrow{width:190px}
+.f.narrow .help{width:404px;max-width:calc(100vw - 64px)}
+.pair{display:flex;gap:24px;flex-wrap:wrap}
+.lbl-row{display:flex;justify-content:space-between;gap:8px}
+.lbl-row label,.lbl{font-weight:500;color:var(--gray-700)}
+.lbl-row .hint{color:var(--gray-500)}
+.input{display:flex;align-items:center;background:#fff;border:1px solid var(--gray-300);border-radius:6px;box-shadow:var(--shadow-sm)}
+.input:focus-within{border-color:var(--indigo-500);box-shadow:0 0 0 1px var(--indigo-500)}
+.input input,.input select,.input textarea{flex:1;min-width:0;border:0;outline:0;padding:8px 12px;background:transparent;line-height:20px}
+.input select{appearance:none;-webkit-appearance:none;padding-right:36px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='%239ca3af'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E") no-repeat right 10px center}
+.input textarea{resize:vertical;min-height:80px}
+.input .suffix{padding:0 12px;color:var(--gray-500)}
+.input.num input{text-align:right}
+.input.ro{background:var(--gray-50);box-shadow:none}
+.input.err{border-color:var(--red-400)}
+.help{color:var(--gray-500)}
+.help.err{color:var(--red-600)}
+.radios{display:flex;flex-direction:column;gap:16px}
+.radios.inline{flex-direction:row;flex-wrap:wrap;gap:24px}
+.radio{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.radio input,.check input{margin:2px 0 0;width:16px;height:16px;accent-color:var(--indigo-600);flex-shrink:0;cursor:pointer}
+.radio .t{font-weight:500;color:var(--gray-700)}
+.radio .s,.check .s{color:var(--gray-500)}
+.radio.boxed{border:1px solid var(--gray-200);border-radius:8px;padding:16px;flex:1;min-width:240px}
+.radio.boxed.sel{border-color:var(--indigo-600);background:var(--indigo-50);box-shadow:0 0 0 1px var(--indigo-600)}
+.radio.disabled{opacity:.5;cursor:not-allowed}
+.check{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.check .t{font-weight:500;color:var(--gray-700)}
+.info{display:flex;gap:12px;background:var(--blue-50);border-radius:6px;padding:16px;color:var(--blue-700)}
+.info svg{color:var(--blue-400)}
+.info b{font-weight:600}
+.counter{display:flex;align-items:center;gap:8px;color:var(--gray-700);background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:10px 12px;width:404px;max-width:100%}
+.counter b{color:var(--gray-900)}
+.dropzone{border:2px dashed var(--gray-300);border-radius:6px;padding:24px;text-align:center;color:var(--gray-500);width:100%}
+.dropzone b{color:var(--indigo-600);font-weight:500}
+.preview{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:6px;padding:12px;color:var(--gray-700)}
+.footer{display:flex;flex-direction:column;gap:20px}
+.footer hr{border:0;height:1px;background:var(--gray-200);margin:0}
+.footer .note{display:flex;gap:8px;align-items:center;font-size:12px;line-height:16px;color:var(--gray-500)}
+.footer .note svg{color:var(--gray-400)}
+.footer .btns{display:flex;justify-content:flex-end;gap:12px}
+.ro-text{padding:8px 0;color:var(--gray-900)}
+.hidden{display:none!important}
+
+/* Modal + toast */
+.overlay{position:fixed;inset:0;background:rgba(107,114,128,.75);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal{background:#fff;border-radius:8px;box-shadow:var(--shadow-lg);width:512px;max-width:100%;padding:24px;display:flex;gap:16px}
+.modal .ic{width:40px;height:40px;border-radius:50%;background:var(--yellow-100);color:var(--yellow-800);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal h3{margin:0 0 8px;font-size:18px;line-height:24px;font-weight:500}
+.modal p{margin:0;color:var(--gray-500)}
+.modal .mb{display:flex;justify-content:flex-end;gap:12px;margin-top:24px}
+.toast{position:fixed;top:80px;right:32px;z-index:60;display:flex;gap:12px;align-items:flex-start;background:var(--green-50);border:1px solid var(--green-400);color:var(--green-800);border-radius:6px;padding:16px;width:384px;box-shadow:var(--shadow-lg)}
+.toast svg{color:var(--green-600)}
+.empty{padding:48px 24px;text-align:center;color:var(--gray-500)}
+.empty b{display:block;color:var(--gray-900);font-weight:500;margin-bottom:4px}
+
+/* Prototype note */
+.proto-note{position:fixed;right:16px;bottom:16px;z-index:40;background:#7c3aed;color:#fff;border-radius:6px;padding:6px 12px;font-size:12px;line-height:16px;box-shadow:var(--shadow-lg)}
+
+@media (max-width:900px){
+  .sidebar{display:none}
+  .topbar{gap:16px;padding:0 16px;overflow-x:auto;justify-content:flex-start}
+  .page-header,.filters,.table-wrap,.pagination,.full-head,.center{padding-left:16px;padding-right:16px}
+  .tabs{margin:0 16px;gap:20px;overflow-x:auto}
+  .page-header{flex-wrap:wrap}
+  .card{padding:20px}
+  .row{flex-direction:column;gap:4px}
+  .row .k{width:auto}
+  .search{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo"><svg role="img" aria-label="Barbora" width="208.205" height="45" viewBox="0 0 208.205 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="logo">
+<path id="lettering" d="M146.034 29.4723C146.034 20.4725 139.318 13.9406 131.046 13.9406V13.9286C122.767 13.9286 116.101 20.4565 116.101 29.4603C116.101 38.4641 122.775 45 131.046 45C139.318 45 146.034 38.4721 146.034 29.4723ZM140.063 29.4484C140.063 35.1723 136.353 39.1282 131.046 39.1282V39.1522C125.774 39.1522 122.072 35.2483 122.072 29.4884C122.072 23.7285 125.739 19.8006 131.046 19.8006C136.353 19.8006 140.063 23.7245 140.063 29.4484ZM16.5472 28.2005V28.2471C19.2957 28.8852 22.1324 31.9972 22.1324 35.4443C22.1324 40.4802 18.894 44.4042 12.0968 44.4042H0V16.6007C0.00424388 15.4699 0.888907 14.5549 1.98011 14.5527H11.9347C17.0374 14.5527 20.5383 17.9287 20.5383 22.2726C20.5383 25.1365 18.4771 27.6045 16.5472 28.2005ZM10.7836 19.5806H5.7272L5.72334 26.4524H10.7836C13.1343 26.4524 14.7786 24.9165 14.7786 22.9925C14.7786 20.9965 13.1343 19.5806 10.7836 19.5806ZM11.5672 39.4003H5.72334V31.0204H11.5131C14.1108 31.0204 16.145 32.6844 16.145 35.1963C16.145 37.7083 14.2806 39.4003 11.5672 39.4003ZM80.9285 24.5366C80.9285 28.6285 78.9754 31.6164 75.4745 33.1044L82.0594 44.3962H75.6443L69.9202 34.2004H65.2304V44.4042H59.5062V16.6007C59.5031 16.0509 59.713 15.5228 60.0889 15.1348C60.4648 14.7468 60.9751 14.5314 61.5057 14.5367H69.6114C76.6826 14.5367 80.9285 18.5367 80.9285 24.5366ZM70.3338 28.9282H65.2311V20.1004H70.3338C73.4603 20.1004 74.9657 22.1924 74.9657 24.5363C74.985 26.7963 73.5028 28.9282 70.3338 28.9282ZM174.203 24.5367C174.203 28.6286 172.269 31.6165 168.776 33.1045L175.35 44.4123H168.935L163.203 34.2005H158.513V44.4043H152.804V16.6008C152.8 16.0542 153.007 15.5286 153.379 15.1409C153.751 14.7533 154.257 14.5358 154.784 14.5368H162.89C169.957 14.5368 174.203 18.5368 174.203 24.5367ZM163.628 28.9282H158.513V20.1004H163.612C166.747 20.1004 168.263 22.1924 168.263 24.5363C168.279 26.7963 166.797 28.9282 163.628 28.9282ZM105.521 28.2454V28.2005C107.451 27.6045 109.513 25.1366 109.513 22.2726C109.513 17.9287 106.016 14.5528 100.913 14.5528H90.966C90.4398 14.5496 89.9342 14.7639 89.5611 15.1483C89.1879 15.5327 88.9781 16.0555 88.9781 16.6007V44.4042H101.079C107.864 44.4042 111.114 40.4803 111.114 35.4444C111.114 31.994 108.28 28.8794 105.521 28.2454ZM94.7107 19.5806H99.7748C102.118 19.5806 103.766 20.9965 103.766 22.9925C103.766 24.9165 102.118 26.4524 99.7748 26.4524H94.6952L94.7107 19.5806ZM94.6952 39.4003H100.543C103.256 39.4003 105.094 37.7083 105.094 35.1963C105.094 32.6844 103.079 31.0204 100.485 31.0204H94.6952V39.4003ZM43.2029 15.9926C42.9457 15.1369 42.1804 14.5547 41.3155 14.5567H38.575C37.7807 14.5543 37.062 15.0441 36.7493 15.8006L25.3858 44.4121H31.5616L33.6961 38.6882H46.1905L48.3288 44.4121H54.5046L43.2029 15.9926ZM38.5245 25.9007L35.6875 33.4486H44.1985L41.3615 25.9007C40.9775 24.8849 40.5546 23.5681 40.2746 22.6963C40.0959 22.1399 39.9754 21.7648 39.9604 21.7648H39.9218C39.9037 21.7648 39.7582 22.2154 39.5497 22.8613C39.2697 23.7282 38.8762 24.9471 38.5245 25.9007ZM196.86 15.8526C196.563 15.0709 195.834 14.557 195.023 14.5566H192.271C191.462 14.5609 190.737 15.0737 190.438 15.8526L179.101 44.4121H185.277L187.415 38.6882H199.887L202.029 44.4121H208.205L196.86 15.8526ZM192.233 25.9007L189.392 33.4486H197.911L195.07 25.9007C194.683 24.8718 194.254 23.534 193.974 22.6626C193.801 22.1248 193.686 21.7648 193.673 21.7648H193.63C193.61 21.7648 193.464 22.2188 193.255 22.8687C192.977 23.7352 192.586 24.9499 192.233 25.9007Z" fill-rule="evenodd" clip-rule="evenodd" fill="#CC0000"/>
+<path id="leaf" d="M88.9722 11.7857C88.9722 11.7857 87.6031 1.67321 100.439 0C100.439 0 99.7447 10.3323 88.9722 11.7857" fill="#66CC00"/>
+</g>
+</svg></div>
+    <nav class="nav">
+      <div class="nav-item"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg><span class="grow">Discounts</span><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg></div>
+      <a class="nav-sub active" href="#/groups">Coupons</a>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <span class="tb-link">Picking</span>
+      <span class="tb-link">Assortment</span>
+      <span class="tb-link active">Marketing</span>
+      <span class="tb-link">Reports</span>
+      <span class="tb-link">eShop Content</span>
+      <span class="avatar">VU</span>
+    </header>
+    <main class="content" id="view"></main>
+  </div>
+</div>
+<div class="proto-note">Prototype – sample data</div>
+<div id="layer"></div>
+
+<script>
+/* ---------- Icons ---------- */
+const I = {
+  plus:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>',
+  filter:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 21V14.4142C10 14.149 9.89464 13.8946 9.70711 13.7071L3.29289 7.29289C3.10536 7.10536 3 6.851 3 6.58579V4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4V6.58579C21 6.851 20.8946 7.10536 20.7071 7.29289L14.2929 13.7071C14.1054 13.8946 14 14.149 14 14.4142V17L10 21Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>',
+  chevR:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>',
+  chevD:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>',
+  home:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>',
+  back:'<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>',
+  dots:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/></svg>',
+  pencil:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>',
+  search:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>',
+  info:'<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+  infoS:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>',
+  download:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>',
+  check:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>',
+  warn:'<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>',
+  users:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>'
+};
+
+/* ---------- Data (sample, no real customer data) ---------- */
+const TODAY = '2026-11-24';
+const SEGMENTS = [
+  ['Čempionas',8120],['Lojalus',15340],['Potencialiai lojalus',12430],['Naujas',6210],['Perspektyvus',4870],
+  ['Reikia dėmesio',7350],['Beveik užmigęs',9120],['Rizikoje',4212],['Negalima prarasti',1980],
+  ['Užmigęs',21400],['Prarastas',38900],['Registruotas',17650],['Vienkartinis',11230]
+];
+const TYPE = {flat:'Flat discount', pct:'Percentage', free:'Free delivery'};
+const DIST = {
+  segment:{t:'Unique codes for a customer segment', short:'Unique · segment'},
+  excel:{t:'Unique codes for customers from Excel', short:'Unique · Excel'},
+  shared:{t:'One shared code', short:'Shared code'},
+  unassigned:{t:'Unassigned codes', short:'Unassigned'}
+};
+
+let groups = [
+  {id:1,name:'RETENTION KLP rizikoje 11 21',type:'flat',value:7,min:59.99,max:null,from:'2026-11-21',to:'2026-11-27',dist:'segment',segment:'Rizikoje',total:4212,used:118,prefix:'KLP7',len:6,desc:'7 € nuolaida perkant bent už 59,99 €.',customer:'7 € nuolaida užsakymui nuo 59,99 €',app:false,unlimited:false,disabled:false,created:'2026-11-20'},
+  {id:2,name:'KAC 2026 11 19 10 procentų',type:'pct',value:10,min:19.99,max:300,from:'2026-11-19',to:'2026-12-19',dist:'unassigned',total:1,used:1,prefix:'KAC',len:6,desc:'Klientas gavo pažeistas prekes, kompensacija.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-19'},
+  {id:3,name:'KAC 2026 11 18 2 EUR',type:'flat',value:2,min:21.99,max:null,from:'2026-11-18',to:'2026-11-30',dist:'unassigned',total:30,used:0,prefix:'KAC',len:6,desc:'Kompensacija už pažeistas prekes.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-18'},
+  {id:4,name:'RETENTION VLN 15+ nepirke 11 17',type:'pct',value:10,min:69.99,max:500,from:'2026-11-17',to:'2026-11-19',dist:'segment',segment:'Beveik užmigęs',total:18940,used:397,prefix:'17BRB10V',len:5,desc:'10% nuolaida perkant bent už 69,99 EUR. Galioja 11 17-19 imtinai.',customer:'10 % nuolaida užsakymui nuo 69,99 €',app:false,unlimited:false,disabled:false,created:'2026-11-16'},
+  {id:5,name:'Tavo krepšelis – tavo sėkmės puodelis!',type:'flat',value:0,min:90,max:null,from:'2026-11-10',to:'2026-11-30',dist:'shared',total:1,used:466,prefix:'PUPELE',len:0,desc:'Loterija: perkant už 90 € ir įvedus kodą dalyvauja loterijoje.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-09'},
+  {id:6,name:'KAC 2026 11 01 5 EUR',type:'flat',value:5,min:24.99,max:null,from:'2026-11-01',to:'2026-11-30',dist:'unassigned',total:50,used:31,prefix:'KAC',len:6,desc:'Mėnesio rezervas.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-01'},
+  {id:7,name:'KAC 2026 11 01 4 EUR',type:'flat',value:4,min:23.99,max:null,from:'2026-11-01',to:'2026-11-30',dist:'unassigned',total:50,used:22,prefix:'KAC',len:6,desc:'Mėnesio rezervas.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-01'},
+  {id:8,name:'KAC 2026 11 01 3 EUR',type:'flat',value:3,min:22.99,max:null,from:'2026-11-01',to:'2026-11-30',dist:'unassigned',total:50,used:50,prefix:'KAC',len:6,desc:'Mėnesio rezervas.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-01'},
+  {id:9,name:'Nemokamas pristatymas APP gruodis',type:'free',value:null,min:39.99,max:null,from:'2026-12-01',to:'2026-12-07',dist:'shared',total:1,used:0,prefix:'APPDOVANA',len:0,desc:'Skatinti užsakymus programėlėje.',customer:'Nemokamas pristatymas programėlėje',app:true,unlimited:false,disabled:false,created:'2026-11-22'},
+  {id:10,name:'Lankstinukas Akropolis',type:'flat',value:5,min:49.99,max:null,from:'2026-11-05',to:'2026-12-31',dist:'unassigned',total:1000,used:12,prefix:'AKR',len:6,desc:'Partnerio lankstinukai. Išjungta – kodai nutekėjo.',customer:'5 € nuolaida užsakymui nuo 49,99 €',app:false,unlimited:false,disabled:true,created:'2026-11-04'},
+  {id:11,name:'RETENTION 02.10 VLN lojalūs',type:'pct',value:10,min:69.99,max:500,from:'2026-10-02',to:'2026-10-05',dist:'excel',total:9800,used:611,prefix:'02BRB10VK',len:5,desc:'10% nuolaida nuo 69,99 EUR, galioja 10 02-05.',customer:'10 % nuolaida užsakymui nuo 69,99 €',app:false,unlimited:false,disabled:false,created:'2026-10-01'}
+];
+
+let programs = [
+  {id:1,name:'Apsipirk 4 kartus ir gauk 7 %',kind:'accumulative',cond:'orders',condValue:4,within:'days',days:39,type:'pct',value:7,min:49.99,max:300,couponDays:60,from:'2026-09-01',to:'2027-01-01',audience:'Lojalus',desc:'Kaupiamoji programa lojaliems.',customer:'7 % nuolaida už lojalumą'},
+  {id:2,name:'Apsipirk 3 kartus ir 4-tam gauk 10 €',kind:'accumulative',cond:'orders',condValue:3,within:'month',days:null,type:'flat',value:10,min:49.99,max:null,couponDays:14,from:'2026-11-01',to:'2026-12-01',audience:'Potencialiai lojalus',desc:'',customer:'10 € nuolaida ketvirtam užsakymui'},
+  {id:3,name:'Pirmas pirkimas −15 %',kind:'new',cond:null,type:'pct',value:15,min:39.99,max:200,couponDays:30,from:'2026-01-01',to:'2027-01-01',audience:'Registruotas',desc:'Naujo kliento programa.',customer:'−15 % pirmam užsakymui'},
+  {id:4,name:'Partnerio darbuotojai 2026',kind:'business',cond:null,type:'pct',value:10,min:1,max:null,couponDays:null,from:'2026-01-01',to:'2027-01-01',audience:'Excel: 412 emails',desc:'Partnerio darbuotojų nuolaida.',customer:'Partnerio nuolaida'},
+  {id:5,name:'Testas – kaupiamoji spalis',kind:'accumulative',cond:'total',condValue:150,within:'month',days:null,type:'flat',value:5,min:29.99,max:null,couponDays:7,from:'2026-10-01',to:'2026-11-01',audience:'Čempionas',desc:'Testinė.',customer:'5 € nuolaida'}
+];
+const PKIND = {accumulative:'Accumulative', new:'New customer', business:'Business customers'};
+
+/* deterministic sample codes */
+function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return(s-1)/2147483646}}
+const CH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const FIRST=['ona','jonas','rasa','tomas','egle','mindaugas','ieva','darius','greta','paulius','lina','andrius','vaida','karolis','asta','marius'];
+const LAST=['p','k','j','s','v','b','m','r','g','z'];
+const fakeEmail=(r)=>FIRST[Math.floor(r()*FIRST.length)]+'.'+LAST[Math.floor(r()*LAST.length)]+Math.floor(r()*90+10)+'@example.com';
+const addDays=(d,n)=>{const x=new Date(d+'T12:00:00');x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
+const dayDiff=(a,b)=>Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);
+
+function sampleCodes(g){
+  const r=rng(g.id*977+13); const out=[];
+  const endUse = g.to<TODAY?g.to:TODAY;
+  const span=Math.max(0,dayDiff(g.from,endUse));
+  if(g.dist==='shared'){
+    const n=Math.min(g.used,14);
+    for(let i=0;i<n;i++){
+      out.push({code:g.prefix,group:g.id,assigned:null,usedBy:fakeEmail(r),usedOn:addDays(g.from,Math.floor(r()*(span+1))),order:'X'+Math.floor(r()*9e8+1e8)+'/'+Math.floor(r()*90+10),total:+(g.min+r()*60).toFixed(2)});
+    }
+    if(g.used===0) out.push({code:g.prefix,group:g.id,assigned:null,usedBy:null});
+    return out;
+  }
+  const n=Math.min(g.total,14);
+  const usedShare=g.used/g.total;
+  for(let i=0;i<n;i++){
+    let code=g.prefix; for(let k=0;k<g.len;k++) code+=CH[Math.floor(r()*CH.length)];
+    const assigned=(g.dist==='segment'||g.dist==='excel')?fakeEmail(r):null;
+    const isUsed = i < Math.round(n*usedShare) || (usedShare>0 && i===0);
+    const row={code,group:g.id,assigned};
+    if(isUsed && span>=0){
+      row.usedBy=assigned||fakeEmail(r);
+      row.usedOn=addDays(g.from,Math.floor(r()*(span+1)));
+      row.order='X'+Math.floor(r()*9e8+1e8)+'/'+Math.floor(r()*90+10);
+      row.total=+(Math.max(g.min||19.99,19.99)+r()*70).toFixed(2);
+    }
+    out.push(row);
+  }
+  return out;
+}
+let codes=[];
+function buildCodes(){
+  codes=[];groups.forEach(g=>codes.push(...sampleCodes(g)));
+  // one customer across several groups – demo for KAC search
+  const demo='ona.petraitiene@example.com';
+  const pick=(gid,i)=>codes.filter(c=>c.group===gid)[i];
+  const a=pick(1,9); if(a){a.assigned=demo;delete a.usedBy;}
+  const b=pick(5,0); if(b){b.usedBy=demo;b.usedOn='2026-11-14';}
+  const c=pick(6,0); if(c){c.usedBy=demo;c.usedOn='2026-11-08';c.order='X631220223/91';c.total=41.20;}
+}
+buildCodes();
+
+/* ---------- Helpers ---------- */
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=n=>n==null?'—':n.toFixed(2).replace('.',',')+' €';
+const nf=n=>n.toLocaleString('lt-LT').replace(/ /g,' ');
+const valueTxt=o=>o.type==='free'?'Free delivery':o.type==='pct'?o.value+' %':money(o.value);
+const fmtD=d=>d?d.replace(/-/g,'.'):'—';
+const period=(a,b)=>fmtD(a)+' – '+fmtD(b);
+const periodS=(a,b)=>a&&b&&a.slice(0,4)===b.slice(0,4)?fmtD(a)+' – '+fmtD(b).slice(5):period(a,b);
+function gStatus(g){
+  if(g.disabled) return ['Disabled','b-red'];
+  if(g.to<TODAY) return ['Expired','b-gray'];
+  if(g.from>TODAY) return ['Scheduled','b-yellow'];
+  if(g.dist!=='shared' && g.used>=g.total) return ['All used','b-indigo'];
+  return ['Active','b-green'];
+}
+function pStatus(p){
+  if(p.to<=TODAY) return ['Ended','b-gray'];
+  if(p.from>TODAY) return ['Scheduled','b-yellow'];
+  return ['Active','b-green'];
+}
+function cStatus(c){
+  const g=groups.find(x=>x.id===c.group);
+  if(c.usedBy) return ['Used','b-green'];
+  if(g.disabled) return ['Disabled','b-red'];
+  if(g.to<TODAY) return ['Expired','b-gray'];
+  return ['Unused','b-blue'];
+}
+const badge=([t,c])=>`<span class="badge ${c}">${t}</span>`;
+function condTxt(p){
+  if(p.kind==='new') return 'First order';
+  if(p.kind==='business') return 'No condition';
+  const what=p.cond==='orders'?p.condValue+' orders':money(p.condValue)+' spent';
+  return what+(p.within==='month'?' in a calendar month':' within '+p.days+' days');
+}
+function minTxt(o){ let s=o.min!=null?'from '+money(o.min):''; if(o.type==='pct'&&o.max) s+=(s?', ':'')+'up to '+money(o.max); return s||'—'; }
+function basketCell(o){ return (o.min!=null?money(o.min):'—')+(o.type==='pct'&&o.max?`<div class="sub">max ${money(o.max)}</div>`:''); }
+
+/* ---------- Router ---------- */
+const state={filters:{groups:{},codes:{},programs:{}},q:'',open:null};
+let route=location.hash||'#/groups';
+window.addEventListener('hashchange',()=>{if(location.hash&&location.hash!==route){route=location.hash;state.open=null;render()}});
+document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');if(a){e.preventDefault();go(a.getAttribute('href'))}},true);
+document.addEventListener('click',e=>{
+  if(state.open && !e.target.closest('.chip-wrap') && !e.target.closest('.act')){state.open=null;render(true)}
+});
+function go(h){route=h;state.open=null;try{history.pushState(null,'',h)}catch(e){};render()}
+window.addEventListener('popstate',()=>{route=location.hash||'#/groups';render()});
+
+function render(keepScroll){
+  const h=route.replace(/^#\/?/,'')||'groups';
+  const [path,query]=h.split('?'); const parts=path.split('/');
+  const params=new URLSearchParams(query||'');
+  const v=document.getElementById('view');
+  let html='';
+  if(['groups','codes','programs'].includes(parts[0]) && parts.length===1) html=listPage(parts[0]);
+  else if(parts[0]==='groups' && parts[2]==='edit') html=formPage('code',groups.find(g=>g.id==parts[1]));
+  else if(parts[0]==='groups') html=groupView(groups.find(g=>g.id==parts[1]));
+  else if(parts[0]==='programs' && parts[2]==='edit') html=formPage('program',programs.find(p=>p.id==parts[1]));
+  else if(parts[0]==='programs') html=programView(programs.find(p=>p.id==parts[1]));
+  else if(parts[0]==='create') html=formPage(params.get('kind')==='program'?'program':'code',null);
+  else html=listPage('groups');
+  v.innerHTML=html;
+  if(keepScroll!==true) window.scrollTo(0,0);
+  bind();
+}
+
+/* ---------- List page ---------- */
+const FILTERS={
+  groups:[
+    {key:'name',label:'Name',kind:'text'},
+    {key:'type',label:'Type',kind:'multi',opts:Object.entries(TYPE)},
+    {key:'dist',label:'Distribution',kind:'multi',opts:Object.entries(DIST).map(([k,v])=>[k,v.t])},
+    {key:'status',label:'Status',kind:'multi',opts:['Active','Scheduled','All used','Expired','Disabled'].map(s=>[s,s])},
+    {key:'valid',label:'Valid on',kind:'text',ph:'YYYY.MM.DD'}
+  ],
+  codes:[
+    {key:'group',label:'Group',kind:'text'},
+    {key:'status',label:'Status',kind:'multi',opts:['Unused','Used','Expired','Disabled'].map(s=>[s,s])},
+    {key:'usedOn',label:'Used on',kind:'text',ph:'YYYY.MM.DD'}
+  ],
+  programs:[
+    {key:'name',label:'Name',kind:'text'},
+    {key:'kind',label:'Program type',kind:'multi',opts:Object.entries(PKIND)},
+    {key:'status',label:'Status',kind:'multi',opts:['Active','Scheduled','Ended'].map(s=>[s,s])}
+  ]
+};
+
+function chip(tab,f){
+  const val=state.filters[tab][f.key];
+  const on=val && (Array.isArray(val)?val.length:val);
+  let label=f.label;
+  if(on) label+=': <span class="val">'+esc(Array.isArray(val)?(val.length===1?(f.opts.find(o=>o[0]===val[0])||[0,val[0]])[1]:val.length+' selected'):val)+'</span>';
+  const isOpen=state.open===tab+':'+f.key;
+  let pop='';
+  if(isOpen){
+    if(f.kind==='multi'){
+      pop=`<div class="popover">${f.opts.map(([k,t])=>`<label class="opt check"><input type="checkbox" data-fopt="${k}" ${(val||[]).includes(k)?'checked':''}><span>${esc(t)}</span></label>`).join('')}
+      <div class="pop-actions"><button class="btn btn-white" data-fclear="${tab}:${f.key}">Clear</button><button class="btn btn-primary" data-fapply="${tab}:${f.key}">Apply</button></div></div>`;
+    } else {
+      pop=`<div class="popover"><div class="input"><input data-ftext value="${esc(val||'')}" placeholder="${esc(f.ph||'Contains…')}"></div>
+      <div class="pop-actions"><button class="btn btn-white" data-fclear="${tab}:${f.key}">Clear</button><button class="btn btn-primary" data-fapply="${tab}:${f.key}">Apply</button></div></div>`;
+    }
+  }
+  return `<div class="chip-wrap"><button class="chip ${on?'on':''}" data-chip="${tab}:${f.key}">${label}</button>${pop}</div>`;
+}
+function anyFilter(tab){return Object.values(state.filters[tab]).some(v=>v&&(Array.isArray(v)?v.length:v))}
+
+function listPage(tab){
+  const tabs=[['groups','Code groups',groups.length],['codes','Codes and redemptions',null],['programs','Automatic programs',programs.length]];
+  const createHref=tab==='programs'?'#/create?kind=program':'#/create';
+  let filters=`<div class="filters">`;
+  if(tab==='codes') filters+=`<div class="search">${I.search}<input id="q" placeholder="Search by code or customer email" value="${esc(state.q)}"></div>`;
+  filters+=I.filter+FILTERS[tab].map(f=>chip(tab,f)).join('');
+  if(anyFilter(tab)||(tab==='codes'&&state.q)) filters+=`<button class="clear-link" data-clearall="${tab}">Clear all</button>`;
+  filters+=`</div>`;
+  let body = tab==='groups'?groupsTable(): tab==='codes'?codesTable(): programsTable();
+  return `
+  <div class="page-header">
+    <div class="text"><h1>Coupons</h1>
+      <div class="meta"><span>${I.check.replace('currentColor','#9ca3af')}Active code groups: <b>${groups.filter(g=>gStatus(g)[0]==='Active').length}</b></span><span>${I.users.replace('currentColor','#9ca3af')}Redemptions this month: <b>${nf(groups.reduce((s,g)=>s+(g.from>='2026-11-01'?g.used:0),0))}</b></span></div>
+    </div>
+    <div class="actions"><a class="btn btn-white icon" href="#" data-toast="Export started. The Excel file will download shortly.">${I.download}Export</a><a class="btn btn-primary icon" href="${createHref}">${I.plus}Create</a></div>
+  </div>
+  <div class="tabs">${tabs.map(([k,t,c])=>`<a class="tab ${k===tab?'active':''}" href="#/${k}">${t}${c!=null?`<span class="count">${c}</span>`:''}</a>`).join('')}</div>
+  ${filters}
+  ${body}`;
+}
+function rowMenu(key,items){
+  const open=state.open===key;
+  return `<td class="act"><button class="btn-icon" data-menu="${key}" aria-label="Actions">${I.dots}</button>${open?`<div class="menu">${items}</div>`:''}</td>`;
+}
+function pager(shown,total){
+  return `<div class="pagination"><span class="pg dis">← Previous</span><span class="mid"><b>1 - ${nf(shown)}</b> of ${nf(total)}</span><span class="pg ${shown>=total?'dis':''}">Next →</span></div>`;
+}
+function emptyRow(cols){return `<tr><td colspan="${cols}"><div class="empty"><b>No results</b>Try changing or clearing the filters.</div></td></tr>`}
+
+function groupsTable(){
+  const f=state.filters.groups;
+  let rows=groups.filter(g=>{
+    if(f.name && !g.name.toLowerCase().includes(f.name.toLowerCase())) return false;
+    if(f.type?.length && !f.type.includes(g.type)) return false;
+    if(f.dist?.length && !f.dist.includes(g.dist)) return false;
+    if(f.status?.length && !f.status.includes(gStatus(g)[0])) return false;
+    if(f.valid){const d=f.valid.replace(/\./g,'-'); if(!(g.from<=d&&g.to>=d)) return false;}
+    return true;
+  });
+  const tr=rows.map(g=>{
+    const pct=g.dist==='shared'?null:Math.round(g.used/g.total*100);
+    return `<tr>
+      <td class="wrap"><a class="link" href="#/groups/${g.id}">${esc(g.name)}</a><div class="sub">Created ${fmtD(g.created)}</div></td>
+      <td>${TYPE[g.type]}</td>
+      <td class="num strong">${g.type==='free'?'—':valueTxt(g)}</td>
+      <td class="num">${basketCell(g)}</td>
+      <td>${periodS(g.from,g.to)}</td>
+      <td>${DIST[g.dist].short}${g.dist==='shared'?`<div class="sub code">${esc(g.prefix)}</div>`:g.segment?`<div class="sub">${esc(g.segment)}</div>`:''}</td>
+      <td class="num">${g.dist==='shared'
+        ?`<span class="strong" style="color:var(--gray-900)">${nf(g.used)}</span><div class="sub">redemptions</div>`
+        :`<div class="progress"><span><span style="color:var(--gray-900)">${nf(g.used)}</span> / ${nf(g.total)}</span><span class="bar"><i style="width:${pct}%"></i></span></div>`}</td>
+      <td>${badge(gStatus(g))}</td>
+      ${rowMenu('g'+g.id,`<a href="#/groups/${g.id}">View</a><a href="#/groups/${g.id}/edit">Edit</a><button data-toast="Export started.">Export codes</button>${g.disabled?`<button data-enable="${g.id}">Enable</button>`:`<button class="danger" data-disable="${g.id}">Disable</button>`}`)}
+    </tr>`}).join('');
+  return `<div class="table-wrap"><div class="table-card"><table>
+    <thead><tr><th>Name</th><th>Type</th><th class="num">Value</th><th class="num">Min. basket</th><th>Valid (delivery date)</th><th>Distribution</th><th class="num">Used</th><th>Status</th><th></th></tr></thead>
+    <tbody>${tr||emptyRow(9)}</tbody></table></div></div>${pager(rows.length,rows.length)}`;
+}
+
+function codesTable(opts={}){
+  const f=opts.group?{}:state.filters.codes;
+  const q=(opts.group?opts.q:state.q||'').trim().toLowerCase();
+  let rows=codes.filter(c=>{
+    if(opts.group && c.group!==opts.group) return false;
+    const g=groups.find(x=>x.id===c.group);
+    if(q && !(c.code.toLowerCase().includes(q)||(c.assigned||'').includes(q)||(c.usedBy||'').includes(q))) return false;
+    if(f.group && !g.name.toLowerCase().includes(f.group.toLowerCase())) return false;
+    if(f.status?.length && !f.status.includes(cStatus(c)[0])) return false;
+    if(f.usedOn && c.usedOn!==f.usedOn.replace(/\./g,'-')) return false;
+    return true;
+  });
+  rows.sort((a,b)=>(b.usedOn||'0').localeCompare(a.usedOn||'0'));
+  const tr=rows.map(c=>{
+    const g=groups.find(x=>x.id===c.group);
+    return `<tr>
+      <td><span class="code">${esc(c.code)}</span></td>
+      ${opts.group?'':`<td class="wrap"><a class="link" href="#/groups/${g.id}">${esc(g.name)}</a><div class="sub">${valueTxt(g)} · ${minTxt(g)} · until ${fmtD(g.to)}</div></td>`}
+      <td>${c.assigned?esc(c.assigned):'<span style="color:var(--gray-400)">'+(g.dist==='shared'?'Everyone':'Not assigned')+'</span>'}</td>
+      <td>${badge(cStatus(c))}</td>
+      <td>${c.usedBy?esc(c.usedBy):'—'}</td>
+      <td>${c.usedOn?fmtD(c.usedOn):'—'}</td>
+      <td>${c.order?`<span class="link">${c.order}</span><div class="sub">${money(c.total)}</div>`:'—'}</td>
+    </tr>`}).join('');
+  const total = opts.group ? (()=>{const g=groups.find(x=>x.id===opts.group);return g.dist==='shared'?Math.max(g.used,1):g.total})() : groups.reduce((s,g)=>s+(g.dist==='shared'?Math.max(g.used,1):g.total),0);
+  const cols=opts.group?6:7;
+  return `<div class="table-wrap"><div class="table-card"><table>
+    <thead><tr><th>Code</th>${opts.group?'':'<th>Group and conditions</th>'}<th>Assigned to</th><th>Status</th><th>Used by</th><th>Used on</th><th>Order</th></tr></thead>
+    <tbody>${tr||emptyRow(cols)}</tbody></table></div></div>${pager(rows.length,(q||anyFilter('codes')&&!opts.group)?rows.length:total)}`;
+}
+
+function programsTable(){
+  const f=state.filters.programs;
+  let rows=programs.filter(p=>{
+    if(f.name && !p.name.toLowerCase().includes(f.name.toLowerCase())) return false;
+    if(f.kind?.length && !f.kind.includes(p.kind)) return false;
+    if(f.status?.length && !f.status.includes(pStatus(p)[0])) return false;
+    return true;
+  });
+  const tr=rows.map(p=>`<tr>
+    <td class="wrap" style="min-width:200px"><a class="link" href="#/programs/${p.id}">${esc(p.name)}</a><div class="sub">${PKIND[p.kind]}</div></td>
+    <td class="wrap" style="min-width:180px">${condTxt(p)}</td>
+    <td class="num strong">${valueTxt(p)}<div class="sub">${p.couponDays?'valid '+p.couponDays+' days':'reusable'}</div></td>
+    <td class="num">${basketCell(p)}</td>
+    <td>${esc(p.audience)}</td>
+    <td>${periodS(p.from,p.to)}</td>
+    <td>${badge(pStatus(p))}</td>
+    ${rowMenu('p'+p.id,`<a href="#/programs/${p.id}">View</a><a href="#/programs/${p.id}/edit">Edit</a><button data-toast="Participants updated from the segment.">Update participants</button>`)}
+  </tr>`).join('');
+  return `<div class="table-wrap"><div class="table-card"><table>
+    <thead><tr><th>Name</th><th>Condition</th><th class="num">Coupon</th><th class="num">Min. basket</th><th>Participants</th><th>Program period</th><th>Status</th><th></th></tr></thead>
+    <tbody>${tr||emptyRow(8)}</tbody></table></div></div>${pager(rows.length,rows.length)}`;
+}
+
+/* ---------- View pages ---------- */
+function childHeader(crumbs,title,actions){
+  return `<div class="page-header child"><div class="text">
+    <div class="crumbs"><a href="#/groups">${I.home}</a>${crumbs.map(([t,h])=>I.chevR+(h?`<a href="${h}">${esc(t)}</a>`:`<span>${esc(t)}</span>`)).join('')}</div>
+    <div class="heading"><a href="${crumbs[crumbs.length-2]?.[1]||'#/groups'}" aria-label="Back">${I.back}</a><h1>${esc(title)}</h1></div>
+  </div>${actions?`<div class="actions">${actions}</div>`:''}</div>`;
+}
+const vrow=(k,d)=>`<div class="row"><div class="k">${k}</div><div class="d">${d}</div></div>`;
+const sec=(title,rows,sub)=>`<div class="section"><div class="sec-head"><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}<hr></div>${rows}</div>`;
+
+function groupView(g){
+  if(!g) return listPage('groups');
+  const st=gStatus(g);
+  const usedTxt=g.dist==='shared'?`${nf(g.used)} <small>redemptions</small>`:`${nf(g.used)} <small>of ${nf(g.total)}</small>`;
+  const left = g.to>=TODAY && !g.disabled ? (g.from>TODAY?'Starts '+fmtD(g.from):dayDiff(TODAY,g.to)+' days left') : fmtD(g.to);
+  const actions=(g.disabled?`<button class="btn btn-white" data-enable="${g.id}">Enable</button>`:`<button class="btn btn-red" data-disable="${g.id}">Disable group</button>`)+`<a class="btn btn-primary icon" href="#/groups/${g.id}/edit">${I.pencil}Edit</a>`;
+  return childHeader([['Coupons','#/groups'],['Code groups','#/groups'],[g.name]],g.name,actions)+`
+  <div class="center"><div class="card">
+    <div class="stats">
+      <div class="stat"><span class="lbl">Status</span><span class="v">${badge(st)}</span></div>
+      <div class="stat"><span class="lbl">Used</span><span class="v">${usedTxt}</span></div>
+      <div class="stat"><span class="lbl">Valid until</span><span class="v" style="font-size:18px;line-height:32px">${left}</span></div>
+    </div>
+    ${sec('Discount',
+      vrow('Type',TYPE[g.type])+
+      (g.type!=='free'?vrow('Value',valueTxt(g)):'')+
+      vrow('Minimum basket',money(g.min)+' <span class="note">· without alcohol, infant formula and (LV) energy drinks</span>')+
+      (g.type==='pct'?vrow('Maximum basket',money(g.max)+' <span class="note">· discount is calculated up to this amount</span>'):''))}
+    ${sec('Validity',
+      vrow('Valid (delivery date)',period(g.from,g.to)+' <span class="note">· end date included</span>')+
+      vrow('Delivery hours','All day')+
+      vrow('App only',g.app?'Yes':'No')+
+      vrow('Uses per customer',g.unlimited?'Unlimited':'Once'))}
+    ${sec('Distribution',
+      vrow('How codes are given',DIST[g.dist].t+(g.segment?' <span class="note">· '+esc(g.segment)+'</span>':''))+
+      (g.dist==='shared'?vrow('Code','<span class="code">'+esc(g.prefix)+'</span>'):vrow('Codes',nf(g.total)+' <span class="note">· prefix <span class="code">'+esc(g.prefix)+'</span> + '+g.len+' characters</span>')))}
+    ${sec('Names and texts',
+      vrow('Name (internal)',esc(g.name))+
+      vrow('Internal description',esc(g.desc)||'—')+
+      vrow('Text for customers',esc(g.customer))+
+      vrow('Created',fmtD(g.created)))}
+  </div></div>
+  <div class="full-head"><div class="sec-head"><div class="bar-row"><h2>${g.dist==='shared'?'Redemptions':'Codes and redemptions'}</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="search">${I.search}<input id="gq" data-group="${g.id}" placeholder="Search by code or customer email" value="${esc(state.gq||'')}"></div><button class="btn btn-white icon" data-toast="Export started.">${I.download}Export</button></div></div><hr></div></div>
+  ${codesTable({group:g.id,q:state.gq||''})}`;
+}
+
+function programView(p){
+  if(!p) return listPage('programs');
+  const actions=`<a class="btn btn-primary icon" href="#/programs/${p.id}/edit">${I.pencil}Edit</a>`;
+  return childHeader([['Coupons','#/groups'],['Automatic programs','#/programs'],[p.name]],p.name,actions)+`
+  <div class="center"><div class="card">
+    <div class="stats">
+      <div class="stat"><span class="lbl">Status</span><span class="v">${badge(pStatus(p))}</span></div>
+      <div class="stat"><span class="lbl">Program type</span><span class="v" style="font-size:18px">${PKIND[p.kind]}</span></div>
+      <div class="stat"><span class="lbl">Participants</span><span class="v" style="font-size:18px">${esc(p.audience)}</span></div>
+    </div>
+    ${sec('Condition',
+      vrow('Customer gets a coupon',p.kind==='new'?'When they register (no orders yet)':p.kind==='business'?'Right away, no condition':'After '+condTxt(p))+
+      (p.kind==='accumulative'?vrow('Counted orders','Orders with status Delivered or later'):''))}
+    ${sec('Coupon',
+      vrow('Type',TYPE[p.type])+(p.type!=='free'?vrow('Value',valueTxt(p)):'')+
+      vrow('Minimum basket',money(p.min))+(p.type==='pct'?vrow('Maximum basket',money(p.max)):'')+
+      vrow('Coupon valid',p.couponDays?p.couponDays+' days from issue':'Reusable for the whole program period'))}
+    ${sec('Program period',
+      vrow('Issues coupons',fmtD(p.from)+' – '+fmtD(addDays(p.to,-1))+' <span class="note">· stops at 00:00 on '+fmtD(p.to)+'</span>')+
+      vrow('Issued coupons after the end','Stay valid until their own end date'))}
+    ${sec('Names and texts',vrow('Name (internal)',esc(p.name))+vrow('Internal description',esc(p.desc)||'—')+vrow('Text for customers',esc(p.customer)))}
+  </div></div>`;
+}
+
+/* ---------- Form page ---------- */
+let form={};
+function initForm(kind,rec){
+  if(rec && kind==='code') form={kind,edit:true,...rec,from:rec.from,to:rec.to,count:rec.total,code:rec.prefix,hours:false};
+  else if(rec) form={kind,edit:true,...rec};
+  else form={kind,edit:false,type:'flat',value:'',min:'',max:'',from:TODAY,to:addDays(TODAY,30),hours:false,hFrom:0,hTo:23,
+    dist:'segment',segment:'Rizikoje',prefix:'',len:6,code:'',count:50,name:'',desc:'',customer:'',app:false,unlimited:false,
+    pkind:'accumulative',cond:'orders',condValue:'',within:'days',days:30,couponDays:30,audience:'Lojalus'};
+  if(rec && kind==='program') form.pkind=rec.kind;
+}
+function radioOpt(name,val,cur,t,s,extra=''){
+  return `<label class="radio ${extra}"><input type="radio" name="${name}" value="${val}" ${cur===val?'checked':''} ${extra.includes('disabled')?'disabled':''}><span><span class="t">${t}</span>${s?`<br><span class="s">${s}</span>`:''}</span></label>`;
+}
+function tf(id,label,val,{hint,help,suffix,num,ph,cls='',type='text',ro}={}){
+  return `<div class="f ${cls}"><div class="lbl-row"><label for="${id}">${label}</label>${hint?`<span class="hint">${hint}</span>`:''}</div>
+    <div class="input ${num?'num':''} ${ro?'ro':''}" id="w-${id}"><input id="${id}" data-k="${id}" type="${type}" value="${esc(val??'')}" ${ph?`placeholder="${esc(ph)}"`:''} ${ro?'readonly':''}>${suffix?`<span class="suffix">${suffix}</span>`:''}</div>
+    ${help?`<span class="help" id="h-${id}">${help}</span>`:''}</div>`;
+}
+function sel(id,label,val,opts,help){
+  return `<div class="f"><div class="lbl-row"><label for="${id}">${label}</label></div><div class="input"><select id="${id}" data-k="${id}">${opts.map(([v,t])=>`<option value="${esc(v)}" ${String(v)===String(val)?'selected':''}>${esc(t)}</option>`).join('')}</select></div>${help?`<span class="help">${help}</span>`:''}</div>`;
+}
+const fsec=(title,inner,sub)=>`<div class="section"><div class="sec-head"><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}<hr></div><div class="fields">${inner}</div></div>`;
+const segOpts=()=>SEGMENTS.map(([n,c])=>[n,n+' ('+nf(c)+')']);
+
+function discountFields(prefix){
+  const f=form; const sfx=f.type==='pct'?'%':'€';
+  return `<div class="f full"><span class="lbl">Discount type</span><div class="radios inline" style="margin-top:8px">
+      ${radioOpt('type','flat',f.type,'Flat discount','Amount in € off the basket')}
+      ${radioOpt('type','pct',f.type,'Percentage','% off the basket')}
+      ${radioOpt('type','free',f.type,'Free delivery','')}
+    </div></div>
+    ${f.type==='free'?'':`<div class="pair">${tf('value','Discount value',f.value,{suffix:sfx,num:true,cls:'narrow',help:f.type==='flat'?'Enter 0 for a lottery or gift code.':''})}</div>`}
+    <div class="pair">
+      ${tf('min','Minimum basket',f.min,{suffix:'€',num:true,help:'Barbora\'s minimum order is 19,99 €. Codes are checked against the basket without excluded items.'})}
+      ${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,help:'The discount is calculated up to this amount.'}):''}
+    </div>`;
+}
+
+function formPage(kind,rec){
+  const key=(rec?'e':'n')+kind+(rec?rec.id:'');
+  if(form._key!==key){initForm(kind,rec);form._key=key}
+  const f=form;
+  const isCode=f.kind==='code';
+  const title=f.edit?(isCode?'Edit code group':'Edit program'):(isCode?'Create discount code':'Create automatic program');
+  const crumbs=f.edit
+    ?[['Coupons','#/groups'],[isCode?'Code groups':'Automatic programs',isCode?'#/groups':'#/programs'],[rec.name,(isCode?'#/groups/':'#/programs/')+rec.id],['Edit']]
+    :[['Coupons','#/groups'],['Create']];
+  let html=childHeader(crumbs,title,'');
+  let inner='';
+
+  // what is created
+  if(!f.edit){
+    inner+=fsec('How will customers get the discount?',
+      `<div class="radios">
+        ${radioOpt('kind','code',f.kind,'Discount code','Customer enters a code at checkout. Used by customer service and marketing.')}
+        ${radioOpt('kind','program',f.kind,'Automatic program','No code to enter – the discount is given automatically when the customer meets a condition (e.g. 4th order) or belongs to a partner company.')}
+      </div>`);
+  }
+
+  inner+=`<div class="info">${I.infoS}<div>Discounts are calculated from the base price and do not apply to <b>alcohol, infant formula and (LV) energy drinks</b>. One discount code per order.</div></div>`;
+
+  if(isCode){
+    inner+=fsec('Discount', f.edit
+      ? `<div class="pair">${tf('typeRo','Discount type',TYPE[f.type],{ro:true})}${f.type!=='free'?tf('valueRo','Discount value',valueTxt(f),{ro:true,cls:'narrow'}):''}</div>
+         <div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true}):''}</div>`
+      : discountFields());
+    inner+=fsec('Validity',
+      `<div class="pair">${tf('from','Valid from',f.from,{type:'date'})}${tf('to','Valid to',f.to,{type:'date'})}</div>
+       <span class="help" style="margin-top:-16px">By delivery date. The code works on both dates.</span>
+       <label class="check"><input type="checkbox" data-k="hours" ${f.hours?'checked':''}><span><span class="t">Limit to delivery hours</span><br><span class="s">Rarely used. By default the code works for all delivery slots.</span></span></label>
+       ${f.hours?`<div class="pair">${sel('hFrom','From',f.hFrom,[...Array(24).keys()].map(h=>[h,h+':00']))}${sel('hTo','To',f.hTo,[...Array(24).keys()].map(h=>[h,h+':00']))}</div>`:''}`);
+    if(f.edit){
+      inner+=sec('Distribution',`${vrow('How codes are given',DIST[f.dist].t)}${f.dist==='shared'?vrow('Code','<span class="code">'+esc(f.prefix)+'</span>'):vrow('Codes',nf(f.total)+' · prefix <span class="code">'+esc(f.prefix)+'</span>')}`,'Codes cannot be changed after they are created.');
+    } else {
+      const seg=SEGMENTS.find(s=>s[0]===f.segment);
+      let dyn='';
+      if(f.dist==='segment') dyn=`${sel('segment','Customer segment',f.segment,segOpts())}
+        <div class="counter">${I.users}<span>Codes to create: <b>${nf(seg?seg[1]:0)}</b> – one per customer</span></div>`;
+      if(f.dist==='excel') dyn=`<div class="f full"><span class="lbl">Customer list</span><div class="dropzone" style="margin-top:4px"><b>Upload a file</b> or drag and drop<br><span class="help">.xlsx with one customer email per row</span></div></div>`;
+      if(f.dist==='shared') dyn=tf('code','Code',f.code,{ph:'e.g. PUPELE',help:'Each customer can use the code once. Check that the code is not used yet.'});
+      if(f.dist==='unassigned') dyn=tf('count','Number of codes',f.count,{num:true,cls:'narrow',help:'An Excel file with the codes downloads after creation.'});
+      if(f.dist!=='shared') dyn+=`<div class="pair">${tf('prefix','Code prefix',f.prefix,{ph:'e.g. KAC',hint:'Optional'})}${tf('len','Random characters',f.len,{num:true,cls:'narrow'})}</div>
+        <span class="help" style="margin-top:-16px">Example: <span class="code">${esc((f.prefix||'').toUpperCase())}${'X7K2PQ9M'.slice(0,Math.max(0,Math.min(8,+f.len||0)))}</span></span>`;
+      inner+=fsec('Who gets the codes',
+        `<div class="radios">
+          ${radioOpt('dist','segment',f.dist,DIST.segment.t,'A personal code for every customer in the segment.')}
+          ${radioOpt('dist','excel',f.dist,DIST.excel.t,'A personal code for every email in the file.')}
+          ${radioOpt('dist','shared',f.dist,DIST.shared.t,'The same code for everyone, e.g. for a lottery or a public campaign.')}
+          ${radioOpt('dist','unassigned',f.dist,DIST.unassigned.t,'Codes without a customer – handed out later, e.g. customer service compensations or flyers.')}
+        </div>${dyn}`);
+    }
+    inner+=fsec('Names and texts',
+      `${tf('name','Name',f.name,{cls:'full',ph:'e.g. KAC 2026 11 24 5 EUR',help:'Internal, customers do not see it.'})}
+       <div class="f full"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" placeholder="Why the codes are created, e.g. the complaint reason">${esc(f.desc)}</textarea></div></div>
+       ${tf('customer','Text for customers',f.customer,{cls:'full',hint:'Optional',ph:autoText(),help:'Shown to the customer with the code. If empty, the text above is used.'})}`);
+    inner+=fsec('Additional options',
+      `<label class="check"><input type="checkbox" data-k="app" ${f.app?'checked':''}><span><span class="t">App only</span><br><span class="s">The code works only in the Barbora app.</span></span></label>
+       <label class="check"><input type="checkbox" data-k="unlimited" ${f.unlimited?'checked':''}><span><span class="t">Unlimited uses</span><br><span class="s">The same customer can use the code more than once.</span></span></label>`);
+  } else {
+    inner+=fsec('Program type',
+      `<div class="radios">
+        ${radioOpt('pkind','accumulative',f.pkind,'Accumulative','Customer gets a coupon after a number of orders or a spent amount within a period.',f.edit?'disabled':'')}
+        ${radioOpt('pkind','new',f.pkind,'New customer','Coupon for the first order, given when the customer registers.',f.edit?'disabled':'')}
+        ${radioOpt('pkind','business',f.pkind,'Business customers','Partner company employees get a reusable coupon without a condition.',f.edit?'disabled':'')}
+      </div>
+      ${f.pkind==='new'?`<div class="info">${I.infoS}<div>Only <b>one</b> new customer program can be active at a time.</div></div>`:''}`);
+    if(f.pkind==='accumulative') inner+=fsec('Condition',
+      `<div class="f full"><span class="lbl">Customer must reach</span><div class="radios inline" style="margin-top:8px">
+        ${radioOpt('cond','orders',f.cond,'Number of orders','')}${radioOpt('cond','total',f.cond,'Amount spent','')}</div></div>
+       ${tf('condValue',f.cond==='orders'?'Orders':'Amount',f.condValue,{num:true,cls:'narrow',suffix:f.cond==='orders'?'orders':'€',help:'Orders with status Delivered or later are counted.'})}
+       <div class="f full"><span class="lbl">Within</span><div class="radios inline" style="margin-top:8px">
+        ${radioOpt('within','days',f.within,'A number of days','')}${radioOpt('within','month',f.within,'A calendar month','')}</div></div>
+       ${f.within==='days'?tf('days','Days',f.days,{num:true,cls:'narrow',suffix:'days'}):''}`);
+    inner+=fsec('Coupon',discountFields()+(f.pkind==='business'?'':tf('couponDays','Coupon valid for',f.couponDays,{num:true,cls:'narrow',suffix:'days',help:'Counted from the moment the coupon is issued.'})));
+    inner+=fsec('Program period',
+      `<div class="pair">${tf('from','Starts',f.from,{type:'date'})}${tf('to','Ends',f.to,{type:'date'})}</div>
+       <span class="help" style="margin-top:-16px">The program stops issuing coupons at 00:00 on the end date. Issued coupons stay valid.</span>`);
+    let part='';
+    if(f.pkind==='accumulative') part=sel('audience','Customer segment',f.audience,segOpts(),'The participant list is updated from the segment.');
+    if(f.pkind==='new') part=vrow('Participants','Registered customers with no orders (segment Registruotas)');
+    if(f.pkind==='business') part=`<div class="f full"><span class="lbl">Employee emails</span><div class="dropzone" style="margin-top:4px"><b>Upload a file</b> or drag and drop<br><span class="help">.xlsx with one email per row</span></div></div>`;
+    inner+=fsec('Participants',part);
+    inner+=fsec('Names and texts',
+      `${tf('name','Name',f.name,{cls:'full',help:'Internal, customers do not see it.'})}
+       <div class="f full"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc">${esc(f.desc)}</textarea></div></div>
+       ${tf('customer','Text for customers',f.customer,{cls:'full',hint:'Optional',ph:autoText()})}`);
+  }
+
+  const cancel=f.edit?((isCode?'#/groups/':'#/programs/')+rec.id):(isCode?'#/groups':'#/programs');
+  inner+=`<div class="footer"><hr>${!f.edit&&isCode&&f.dist==='unassigned'?`<div class="note">${I.info}<span>After creation the codes download as an Excel file. You can download them again from the group page.</span></div><hr>`:''}
+    <div class="btns"><a class="btn btn-white" href="${cancel}">Cancel</a><button class="btn btn-primary" id="submit">${f.edit?'Save':'Create'}</button></div></div>`;
+  return html+`<div class="center"><div class="card">${inner}</div></div>`;
+}
+function autoText(){
+  const f=form; const min=f.min?` nuo ${String(f.min).replace('.',',')} €`:'';
+  if(f.type==='free') return 'Nemokamas pristatymas'+(min?' užsakymui'+min:'');
+  if(f.value==='' || f.value==null) return 'Generated from the value and minimum basket';
+  return (f.type==='pct'?f.value+' %':String(f.value).replace('.',',')+' €')+' nuolaida užsakymui'+min;
+}
+
+/* ---------- Events ---------- */
+function toast(msg){
+  const l=document.getElementById('layer');
+  l.innerHTML=`<div class="toast">${I.check}<div>${esc(msg)}</div></div>`;
+  clearTimeout(toast.t); toast.t=setTimeout(()=>{l.innerHTML=''},3500);
+}
+function confirmModal(title,text,ok,cb){
+  const l=document.getElementById('layer');
+  l.innerHTML=`<div class="overlay"><div class="modal"><div class="ic">${I.warn}</div><div style="flex:1"><h3>${esc(title)}</h3><p>${text}</p>
+    <div class="mb"><button class="btn btn-white" id="mCancel">Cancel</button><button class="btn btn-primary" id="mOk">${esc(ok)}</button></div></div></div></div>`;
+  document.getElementById('mCancel').onclick=()=>l.innerHTML='';
+  document.getElementById('mOk').onclick=()=>{l.innerHTML='';cb()};
+}
+function bind(){
+  const v=document.getElementById('view');
+  v.querySelectorAll('[data-chip]').forEach(b=>b.onclick=e=>{e.stopPropagation();state.open=state.open===b.dataset.chip?null:b.dataset.chip;render(true);
+    const inp=v.querySelector('[data-ftext]'); if(inp){inp.focus(); inp.onkeydown=ev=>{if(ev.key==='Enter') v.querySelector('[data-fapply]').click()}}});
+  v.querySelectorAll('[data-fapply]').forEach(b=>b.onclick=e=>{e.stopPropagation();const [tab,key]=b.dataset.fapply.split(':');const pop=b.closest('.popover');
+    const t=pop.querySelector('[data-ftext]'); state.filters[tab][key]=t?t.value.trim():[...pop.querySelectorAll('[data-fopt]:checked')].map(i=>i.dataset.fopt);state.open=null;render(true)});
+  v.querySelectorAll('[data-fclear]').forEach(b=>b.onclick=e=>{e.stopPropagation();const [tab,key]=b.dataset.fclear.split(':');delete state.filters[tab][key];state.open=null;render(true)});
+  v.querySelectorAll('[data-clearall]').forEach(b=>b.onclick=()=>{state.filters[b.dataset.clearall]={};if(b.dataset.clearall==='codes')state.q='';render(true)});
+  v.querySelectorAll('.popover').forEach(p=>p.onclick=e=>e.stopPropagation());
+  v.querySelectorAll('[data-menu]').forEach(b=>b.onclick=e=>{e.stopPropagation();state.open=state.open===b.dataset.menu?null:b.dataset.menu;render(true)});
+  document.querySelectorAll('[data-toast]').forEach(b=>b.onclick=e=>{e.preventDefault();state.open=null;toast(b.dataset.toast);render(true)});
+  v.querySelectorAll('[data-disable]').forEach(b=>b.onclick=e=>{e.preventDefault();const g=groups.find(x=>x.id==b.dataset.disable);state.open=null;
+    confirmModal('Disable “'+g.name+'”?','All <b>'+nf(g.dist==='shared'?1:g.total-g.used)+'</b> unused codes in this group will stop working. You can enable the group again later.','Disable',()=>{g.disabled=true;render(true);toast('Group disabled.')})});
+  v.querySelectorAll('[data-enable]').forEach(b=>b.onclick=e=>{e.preventDefault();groups.find(x=>x.id==b.dataset.enable).disabled=false;state.open=null;render(true);toast('Group enabled.')});
+  const q=document.getElementById('q'); if(q){q.oninput=()=>{state.q=q.value;const pos=q.selectionStart;render(true);const n=document.getElementById('q');n.focus();n.setSelectionRange(pos,pos)}}
+  const gq=document.getElementById('gq'); if(gq){gq.oninput=()=>{state.gq=gq.value;const pos=gq.selectionStart;render(true);const n=document.getElementById('gq');n.focus();n.setSelectionRange(pos,pos)}}
+  // form
+  v.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
+    if(r.name==='kind'){ const k=r.value; form._key=null; go(k==='program'?'#/create?kind=program':'#/create'); return; }
+    form[r.name]=r.value; render(true)});
+  v.querySelectorAll('[data-k]').forEach(i=>{
+    if(i.type==='checkbox'){i.onchange=()=>{form[i.dataset.k]=i.checked;render(true)};return}
+    const rerender=['segment','prefix','len','value','min','audience'].includes(i.dataset.k);
+    const ev=i.tagName==='SELECT'?'onchange':'oninput';
+    i[ev]=()=>{form[i.dataset.k]=i.value; if(rerender){const id=i.id,pos=i.selectionStart;render(true);const n=document.getElementById(id);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}};
+  });
+  const s=document.getElementById('submit'); if(s) s.onclick=submit;
+}
+function submit(){
+  const f=form;
+  const err=(id,msg)=>{const w=document.getElementById('w-'+id);if(w){w.classList.add('err');let h=document.getElementById('h-'+id);if(!h){h=document.createElement('span');h.id='h-'+id;w.after(h)}h.className='help err';h.textContent=msg;w.scrollIntoView({block:'center',behavior:'smooth'})}};
+  if(!f.edit && f.type!=='free' && (f.value===''||f.value==null)) return err('value','Enter the discount value.');
+  if(!String(f.name||'').trim()) return err('name','Enter a name.');
+  if(f.kind==='code' && !f.edit && f.dist==='shared' && !String(f.code||'').trim()) return err('code','Enter the code.');
+  const num=x=>x===''||x==null?null:parseFloat(String(x).replace(',','.'));
+  if(f.edit){
+    const arr=f.kind==='code'?groups:programs; const rec=arr.find(x=>x.id===f.id);
+    Object.assign(rec,{name:f.name,desc:f.desc,customer:f.customer||autoText(),min:num(f.min),max:num(f.max),from:f.from,to:f.to,app:!!f.app,unlimited:!!f.unlimited});
+    form._key=null; go((f.kind==='code'?'#/groups/':'#/programs/')+rec.id); toast('Changes saved.'); return;
+  }
+  if(f.kind==='program'){
+    const id=Math.max(...programs.map(p=>p.id))+1;
+    programs.unshift({id,name:f.name,kind:f.pkind,cond:f.cond,condValue:num(f.condValue),within:f.within,days:num(f.days),type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),couponDays:f.pkind==='business'?null:num(f.couponDays),from:f.from,to:f.to,audience:f.pkind==='new'?'Registruotas':f.pkind==='business'?'Excel: 0 emails':f.audience,desc:f.desc,customer:f.customer||autoText()});
+    form._key=null; go('#/programs/'+id); toast('Program created.'); return;
+  }
+  const seg=SEGMENTS.find(s=>s[0]===f.segment);
+  const total=f.dist==='segment'?seg[1]:f.dist==='excel'?120:f.dist==='shared'?1:Math.max(1,parseInt(f.count)||1);
+  const create=()=>{
+    const id=Math.max(...groups.map(g=>g.id))+1;
+    const g={id,name:f.name,type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),from:f.from,to:f.to,dist:f.dist,segment:f.dist==='segment'?f.segment:null,total,used:0,prefix:f.dist==='shared'?String(f.code).toUpperCase():String(f.prefix||'').toUpperCase(),len:f.dist==='shared'?0:parseInt(f.len)||6,desc:f.desc,customer:f.customer||autoText(),app:!!f.app,unlimited:!!f.unlimited,disabled:false,created:TODAY};
+    groups.unshift(g); codes.push(...sampleCodes(g)); form._key=null; go('#/groups/'+id);
+    toast(f.dist==='unassigned'?nf(total)+' codes created. The Excel file is downloading.':nf(total)+(total===1?' code':' codes')+' created.');
+  };
+  if(f.dist==='segment') confirmModal('Create '+nf(total)+' codes?','A personal code will be created for every customer in the segment <b>'+esc(f.segment)+'</b>. This cannot be undone, but the group can be disabled.','Create codes',create);
+  else create();
+}
+render();
+</script>
+</body>
+</html>
