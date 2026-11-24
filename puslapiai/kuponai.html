@@ -294,7 +294,8 @@ const SEGMENTS = [
   ['Reikia dėmesio',7350],['Beveik užmigęs',9120],['Rizikoje',4212],['Negalima prarasti',1980],
   ['Užmigęs',21400],['Prarastas',38900],['Registruotas',17650],['Vienkartinis',11230]
 ];
-const TYPE = {flat:'Flat discount', pct:'Percentage', free:'Free delivery'};
+const TYPE = {flat:'Flat discount', pct:'Percentage', free:'Free delivery', lottery:'Lottery'};
+const hasValue=t=>t==='flat'||t==='pct';
 const DIST = {
   segment:{t:'Unique codes for a customer segment', short:'Unique · segment'},
   excel:{t:'Unique codes for customers from Excel', short:'Unique · Excel'},
@@ -307,7 +308,7 @@ let groups = [
   {id:2,name:'KAC 2026 11 19 10 procentų',type:'pct',value:10,min:19.99,max:300,from:'2026-11-19',to:'2026-12-19',dist:'unassigned',total:1,used:1,prefix:'KAC',len:6,desc:'Klientas gavo pažeistas prekes, kompensacija.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-19'},
   {id:3,name:'KAC 2026 11 18 2 EUR',type:'flat',value:2,min:21.99,max:null,from:'2026-11-18',to:'2026-11-30',dist:'unassigned',total:30,used:0,prefix:'KAC',len:6,desc:'Kompensacija už pažeistas prekes.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-18'},
   {id:4,name:'RETENTION VLN 15+ nepirke 11 17',type:'pct',value:10,min:69.99,max:500,from:'2026-11-17',to:'2026-11-19',dist:'segment',segment:'Beveik užmigęs',total:18940,used:397,prefix:'17BRB10V',len:5,desc:'10% nuolaida perkant bent už 69,99 EUR. Galioja 11 17-19 imtinai.',customer:'10 % nuolaida užsakymui nuo 69,99 €',app:false,unlimited:false,disabled:false,created:'2026-11-16'},
-  {id:5,name:'Tavo krepšelis – tavo sėkmės puodelis!',type:'flat',value:0,min:90,max:null,from:'2026-11-10',to:'2026-11-30',dist:'shared',total:1,used:466,prefix:'PUPELE',len:0,desc:'Loterija: perkant už 90 € ir įvedus kodą dalyvauja loterijoje.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-09'},
+  {id:5,name:'Tavo krepšelis – tavo sėkmės puodelis!',type:'lottery',value:0,min:90,max:null,from:'2026-11-10',to:'2026-11-30',dist:'shared',total:1,used:466,prefix:'PUPELE',len:0,desc:'Loterija: perkant už 90 € ir įvedus kodą dalyvauja loterijoje.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-09'},
   {id:6,name:'KAC 2026 11 01 5 EUR',type:'flat',value:5,min:24.99,max:null,from:'2026-11-01',to:'2026-11-30',dist:'unassigned',total:50,used:31,prefix:'KAC',len:6,desc:'Mėnesio rezervas.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-01'},
   {id:7,name:'KAC 2026 11 01 4 EUR',type:'flat',value:4,min:23.99,max:null,from:'2026-11-01',to:'2026-11-30',dist:'unassigned',total:50,used:22,prefix:'KAC',len:6,desc:'Mėnesio rezervas.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-01'},
   {id:8,name:'KAC 2026 11 01 3 EUR',type:'flat',value:3,min:22.99,max:null,from:'2026-11-01',to:'2026-11-30',dist:'unassigned',total:50,used:50,prefix:'KAC',len:6,desc:'Mėnesio rezervas.',customer:'Dėkojame, kad perkate',app:false,unlimited:false,disabled:false,created:'2026-11-01'},
@@ -379,7 +380,7 @@ buildCodes();
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const money=n=>n==null?'—':n.toFixed(2).replace('.',',')+' €';
 const nf=n=>n.toLocaleString('lt-LT').replace(/ /g,' ');
-const valueTxt=o=>o.type==='free'?'Free delivery':o.type==='pct'?o.value+' %':money(o.value);
+const valueTxt=o=>o.type==='lottery'?'Lottery':o.type==='free'?'Free delivery':o.type==='pct'?o.value+' %':money(o.value);
 const fmtD=d=>d?d.replace(/-/g,'.'):'—';
 const period=(a,b)=>fmtD(a)+' – '+fmtD(b);
 const periodS=(a,b)=>a&&b&&a.slice(0,4)===b.slice(0,4)?fmtD(a)+' – '+fmtD(b).slice(5):period(a,b);
@@ -526,7 +527,7 @@ function groupsTable(){
     return `<tr>
       <td class="wrap"><a class="link" href="#/groups/${g.id}">${esc(g.name)}</a><div class="sub">Created ${fmtD(g.created)}</div></td>
       <td>${TYPE[g.type]}</td>
-      <td class="num strong">${g.type==='free'?'—':valueTxt(g)}</td>
+      <td class="num strong">${hasValue(g.type)?valueTxt(g):'—'}</td>
       <td class="num">${basketCell(g)}</td>
       <td>${periodS(g.from,g.to)}</td>
       <td>${DIST[g.dist].short}${g.dist==='shared'?`<div class="sub code">${esc(g.prefix)}</div>`:g.segment?`<div class="sub">${esc(g.segment)}</div>`:''}</td>
@@ -625,7 +626,7 @@ function groupView(g){
       vrow('Created',fmtD(g.created)))}
     ${sec('Discount',
       vrow('Type',TYPE[g.type])+
-      (g.type!=='free'?vrow('Value',valueTxt(g)):'')+
+      (hasValue(g.type)?vrow('Value',valueTxt(g)):'')+
       vrow('Minimum basket',money(g.min)+' <span class="note">· without alcohol, infant formula and (LV) energy drinks</span>')+
       (g.type==='pct'?vrow('Maximum basket',money(g.max)+' <span class="note">· discount is calculated up to this amount</span>'):''))}
     ${sec('Validity',
@@ -657,7 +658,7 @@ function programView(p){
       vrow('Customer gets a coupon',p.kind==='new'?'When they register (no orders yet)':p.kind==='business'?'Right away, no condition':'After '+condTxt(p))+
       (p.kind==='accumulative'?vrow('Counted orders','Orders with status Delivered or later'):''))}
     ${sec('Coupon',
-      vrow('Type',TYPE[p.type])+(p.type!=='free'?vrow('Value',valueTxt(p)):'')+
+      vrow('Type',TYPE[p.type])+(hasValue(p.type)?vrow('Value',valueTxt(p)):'')+
       vrow('Minimum basket',money(p.min))+(p.type==='pct'?vrow('Maximum basket',money(p.max)):'')+
       vrow('Coupon valid',p.couponDays?p.couponDays+' days from issue':'Reusable for the whole program period'))}
     ${sec('Program period',
@@ -691,17 +692,21 @@ const fsec=(title,inner,sub)=>`<div class="section"><div class="sec-head"><h2>${
 const segOpts=()=>SEGMENTS.map(([n,c])=>[n,n+' ('+nf(c)+')']);
 
 function discountFields(prefix){
-  const f=form; const sfx=f.type==='pct'?'%':'€';
+  const f=form; const sfx=f.type==='pct'?'%':'€'; const isCode=f.kind==='code';
+  if(!isCode && f.type==='lottery') f.type='flat';
+  const minF=tf('min','Minimum basket',f.min,{suffix:'€',num:true,help:'Barbora\'s minimum order is 19,99 €. Codes are checked against the basket without excluded items.'});
   return `<div class="f full"><span class="lbl">Discount type</span><div class="radios inline" style="margin-top:8px">
       ${radioOpt('type','flat',f.type,'Flat discount','Amount in € off the basket')}
       ${radioOpt('type','pct',f.type,'Percentage','% off the basket')}
       ${radioOpt('type','free',f.type,'Free delivery','')}
+      ${isCode?radioOpt('type','lottery',f.type,'Lottery','Customer takes part in a draw'):''}
     </div></div>
-    ${f.type==='free'?'':`<div class="pair">${tf('value','Discount value',f.value,{suffix:sfx,num:true,cls:'narrow',help:f.type==='flat'?'Enter 0 for a lottery or gift code.':''})}</div>`}
+    ${f.type==='lottery'?`<span class="help" style="margin-top:-16px">Lottery conditions (e.g. products or categories) will be added later.</span>`:''}
     <div class="pair">
-      ${tf('min','Minimum basket',f.min,{suffix:'€',num:true,help:'Barbora\'s minimum order is 19,99 €. Codes are checked against the basket without excluded items.'})}
-      ${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,help:'The discount is calculated up to this amount.'}):''}
-    </div>`;
+      ${hasValue(f.type)?tf('value','Discount value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}
+      ${minF}
+    </div>
+    ${f.type==='pct'?`<div class="pair">${tf('max','Maximum basket',f.max,{suffix:'€',num:true,help:'The discount is calculated up to this amount.'})}</div>`:''}`;
 }
 
 function formPage(kind,rec){
@@ -728,18 +733,21 @@ function formPage(kind,rec){
   // names and texts first, as in the old admin
   inner+=fsec('Names and texts',isCode
     ? `${tf('name','Name',f.name,{cls:'full',ph:'e.g. KAC 2026 11 24 5 EUR',help:'Internal, customers do not see it.'})}
-       <div class="f full"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" placeholder="Why the codes are created, e.g. the complaint reason">${esc(f.desc)}</textarea></div></div>
-       ${tf('customer','Text for customers',f.customer,{cls:'full',hint:'Optional',ph:autoText(),help:'Shown to the customer with the code. If empty, it is generated from the discount below.'})}`
+       <div class="pair">
+       <div class="f"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" placeholder="Why the codes are created, e.g. the complaint reason">${esc(f.desc)}</textarea></div></div>
+       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label><span class="hint">Optional</span></div><div class="input"><textarea id="customer" data-k="customer" placeholder="${esc(autoText())}">${esc(f.customer)}</textarea></div><span class="help">Shown to the customer with the code. If empty, it is generated from the discount below.</span></div>
+       </div>`
     : `${tf('name','Name',f.name,{cls:'full',help:'Internal, customers do not see it.'})}
-       <div class="f full"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc">${esc(f.desc)}</textarea></div></div>
-       ${tf('customer','Text for customers',f.customer,{cls:'full',hint:'Optional',ph:autoText(),help:'If empty, it is generated from the coupon below.'})}`);
-
-  inner+=`<div class="info">${I.infoS}<div>Discounts are calculated from the base price and do not apply to <b>alcohol, infant formula and (LV) energy drinks</b>. One discount code per order.</div></div>`;
+       <div class="pair">
+       <div class="f"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc">${esc(f.desc)}</textarea></div></div>
+       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label><span class="hint">Optional</span></div><div class="input"><textarea id="customer" data-k="customer" placeholder="${esc(autoText())}">${esc(f.customer)}</textarea></div><span class="help">If empty, it is generated from the coupon below.</span></div>
+       </div>`);
 
   if(isCode){
     inner+=fsec('Discount', f.edit
-      ? `<div class="pair">${tf('typeRo','Discount type',TYPE[f.type],{ro:true})}${f.type!=='free'?tf('valueRo','Discount value',valueTxt(f),{ro:true,cls:'narrow'}):''}</div>
-         <div class="pair">${tf('min','Minimum basket',f.min,{suffix:'€',num:true})}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true}):''}</div>`
+      ? `<div class="pair">${tf('typeRo','Discount type',TYPE[f.type],{ro:true})}</div>
+         <div class="pair">${hasValue(f.type)?tf('valueRo','Discount value',valueTxt(f),{ro:true,cls:'narrow'}):''}${tf('min','Minimum basket',f.min,{suffix:'€',num:true})}</div>
+         ${f.type==='pct'?`<div class="pair">${tf('max','Maximum basket',f.max,{suffix:'€',num:true})}</div>`:''}`
       : discountFields());
     inner+=fsec('Validity',
       `<div class="pair">${tf('from','Valid from',f.from,{type:'date'})}${tf('to','Valid to',f.to,{type:'date'})}</div>
@@ -802,6 +810,7 @@ function formPage(kind,rec){
 }
 function autoText(){
   const f=form; const min=f.min?` nuo ${String(f.min).replace('.',',')} €`:'';
+  if(f.type==='lottery') return 'Dalyvaukite loterijoje'+(min?' apsipirkę'+min:'');
   if(f.type==='free') return 'Nemokamas pristatymas'+(min?' užsakymui'+min:'');
   if(f.value==='' || f.value==null) return 'Generated from the value and minimum basket';
   return (f.type==='pct'?f.value+' %':String(f.value).replace('.',',')+' €')+' nuolaida užsakymui'+min;
@@ -851,7 +860,7 @@ function bind(){
 function submit(){
   const f=form;
   const err=(id,msg)=>{const w=document.getElementById('w-'+id);if(w){w.classList.add('err');let h=document.getElementById('h-'+id);if(!h){h=document.createElement('span');h.id='h-'+id;w.after(h)}h.className='help err';h.textContent=msg;w.scrollIntoView({block:'center',behavior:'smooth'})}};
-  if(!f.edit && f.type!=='free' && (f.value===''||f.value==null)) return err('value','Enter the discount value.');
+  if(!f.edit && hasValue(f.type) && (f.value===''||f.value==null)) return err('value','Enter the discount value.');
   if(!String(f.name||'').trim()) return err('name','Enter a name.');
   if(f.kind==='code' && !f.edit && f.dist==='shared' && !String(f.code||'').trim()) return err('code','Enter the code.');
   const num=x=>x===''||x==null?null:parseFloat(String(x).replace(',','.'));
