@@ -725,6 +725,15 @@ function formPage(kind,rec){
       </div>`);
   }
 
+  // names and texts first, as in the old admin
+  inner+=fsec('Names and texts',isCode
+    ? `${tf('name','Name',f.name,{cls:'full',ph:'e.g. KAC 2026 11 24 5 EUR',help:'Internal, customers do not see it.'})}
+       <div class="f full"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" placeholder="Why the codes are created, e.g. the complaint reason">${esc(f.desc)}</textarea></div></div>
+       ${tf('customer','Text for customers',f.customer,{cls:'full',hint:'Optional',ph:autoText(),help:'Shown to the customer with the code. If empty, it is generated from the discount below.'})}`
+    : `${tf('name','Name',f.name,{cls:'full',help:'Internal, customers do not see it.'})}
+       <div class="f full"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc">${esc(f.desc)}</textarea></div></div>
+       ${tf('customer','Text for customers',f.customer,{cls:'full',hint:'Optional',ph:autoText(),help:'If empty, it is generated from the coupon below.'})}`);
+
   inner+=`<div class="info">${I.infoS}<div>Discounts are calculated from the base price and do not apply to <b>alcohol, infant formula and (LV) energy drinks</b>. One discount code per order.</div></div>`;
 
   if(isCode){
@@ -757,10 +766,6 @@ function formPage(kind,rec){
           ${radioOpt('dist','unassigned',f.dist,DIST.unassigned.t,'Codes without a customer – handed out later, e.g. customer service compensations or flyers.')}
         </div>${dyn}`);
     }
-    inner+=fsec('Names and texts',
-      `${tf('name','Name',f.name,{cls:'full',ph:'e.g. KAC 2026 11 24 5 EUR',help:'Internal, customers do not see it.'})}
-       <div class="f full"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" placeholder="Why the codes are created, e.g. the complaint reason">${esc(f.desc)}</textarea></div></div>
-       ${tf('customer','Text for customers',f.customer,{cls:'full',hint:'Optional',ph:autoText(),help:'Shown to the customer with the code. If empty, the text above is used.'})}`);
     inner+=fsec('Additional options',
       `<label class="check"><input type="checkbox" data-k="app" ${f.app?'checked':''}><span><span class="t">App only</span><br><span class="s">The code works only in the Barbora app.</span></span></label>
        <label class="check"><input type="checkbox" data-k="unlimited" ${f.unlimited?'checked':''}><span><span class="t">Unlimited uses</span><br><span class="s">The same customer can use the code more than once.</span></span></label>`);
@@ -788,10 +793,6 @@ function formPage(kind,rec){
     if(f.pkind==='new') part=vrow('Participants','Registered customers with no orders (segment Registruotas)');
     if(f.pkind==='business') part=`<div class="f full"><span class="lbl">Employee emails</span><div class="dropzone" style="margin-top:4px"><b>Upload a file</b> or drag and drop<br><span class="help">.xlsx with one email per row</span></div></div>`;
     inner+=fsec('Participants',part);
-    inner+=fsec('Names and texts',
-      `${tf('name','Name',f.name,{cls:'full',help:'Internal, customers do not see it.'})}
-       <div class="f full"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc">${esc(f.desc)}</textarea></div></div>
-       ${tf('customer','Text for customers',f.customer,{cls:'full',hint:'Optional',ph:autoText()})}`);
   }
 
   const cancel=f.edit?((isCode?'#/groups/':'#/programs/')+rec.id):(isCode?'#/groups':'#/programs');
