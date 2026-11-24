@@ -869,9 +869,8 @@ function formPage(kind,rec){
       inner+=sec('Distribution',`${vrow('How codes are given',DIST[f.dist].t+(f.segment?' <span class="note">· '+esc(f.segment)+'</span>':''))}${f.dist==='shared'?vrow('Code','<span class="code">'+esc(f.prefix)+'</span>'):vrow('Codes',nf(f.total)+' · prefix <span class="code">'+esc(f.prefix)+'</span>')}`,'Codes cannot be changed after they are created.');
     } else {
       let rows=frow('Who gets the codes','Unique codes are personal. A shared code is the same for everyone.',
-        sel('dist','Recipients',f.dist,[['segment','Customers by audience filters'],['excel','Customers from a file'],['shared','Everyone – one shared code'],['unassigned','Codes without customers']]));
+        sel('dist','Recipients',f.dist,[['segment','Customers by audience filters'],['shared','Everyone – one shared code'],['unassigned','Codes without customers']]));
       if(f.dist==='segment') rows+=frow('Target audience','Define which customers get a code.',audienceControl('aud',true));
-      if(f.dist==='excel') rows+=frow('Customer list','An .xlsx file with one customer email per row.',`<div class="dropzone"><b>Upload a file</b> or drag and drop</div>`);
       if(f.dist==='unassigned') rows+=frow('Number of codes','An Excel file with the codes downloads after creation.',tf('count','Codes',f.count,{num:true,cls:'narrow'}));
       rows+=codeFormatRow();
       inner+=fsec('Codes',rows,null,'rows');
