@@ -209,6 +209,36 @@ td.act{width:56px;padding:8px 16px;text-align:right;position:relative}
 .footer .btns{display:flex;justify-content:flex-end;gap:12px}
 .ro-text{padding:8px 0;color:var(--gray-900)}
 .hidden{display:none!important}
+.fields.rows{gap:40px;padding-top:32px}
+.frow{display:grid;grid-template-columns:1fr 404px;gap:24px;align-items:start}
+.frow .fl .t{font-weight:500;color:var(--gray-900)}
+.frow .fl .s{color:var(--gray-500);margin-top:4px;max-width:360px}
+.frow .fr{display:flex;flex-direction:column;gap:16px;min-width:0}
+.frow .fr .f{width:100%}
+.frow .fr .f.narrow{width:190px}
+.frow .fr .f.narrow .help{width:404px;max-width:none}
+.frow .fr .pair .f.narrow .help{width:auto}
+.frow .counter{width:100%}
+.counter.warn{background:var(--yellow-50,#fefce8);border-color:#fde68a;color:#92400e}
+.aud-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--indigo-100);color:var(--indigo-700);font-size:12px;font-weight:500}
+.link{background:none;border:0;padding:0;color:var(--indigo-600);font-weight:500;cursor:pointer}
+.link:hover{color:var(--indigo-800)}
+.btn-sm{padding:5px 11px}
+#sheet .sheet-bg{position:fixed;inset:0;background:rgba(107,114,128,.75);z-index:45}
+#sheet .sheet{position:fixed;top:0;right:0;bottom:0;width:640px;max-width:100%;background:#fff;z-index:46;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.sh-head{display:flex;align-items:center;gap:12px;padding:24px 32px;border-bottom:1px solid var(--gray-200)}
+.sh-head h2{margin:0;flex:1;font-size:18px;line-height:28px;font-weight:500;color:var(--gray-900)}
+.sh-close{background:#fff;box-shadow:var(--shadow);margin-left:-48px}
+.sh-body{flex:1;overflow:auto;padding:0 32px}
+.sg{padding:24px 0;border-bottom:1px solid var(--gray-200)}
+.sg h3{margin:0 0 16px;font-size:16px;line-height:24px;font-weight:500;color:var(--gray-900)}
+.sg .chips{display:flex;flex-wrap:wrap;gap:8px}
+.sg .sums{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px;color:var(--gray-500)}
+.sg .sum b{color:var(--gray-900);font-weight:500}
+.sg .x{background:none;border:0;color:var(--gray-400);font-size:18px;line-height:1;margin-left:6px;cursor:pointer}
+.sh-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 32px;border-top:1px solid var(--gray-200);background:var(--gray-50)}
+.sh-foot span{display:flex;align-items:center;gap:8px;color:var(--gray-700)}
 
 /* Modal + toast */
 .overlay{position:fixed;inset:0;background:rgba(107,114,128,.75);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
@@ -235,6 +265,8 @@ td.act{width:56px;padding:8px 16px;text-align:right;position:relative}
   .row{flex-direction:column;gap:4px}
   .row .k{width:auto}
   .search{width:100%}
+  .frow{grid-template-columns:1fr;gap:12px}
+  .sh-close{margin-left:0}
 }
 </style>
 </head>
@@ -265,11 +297,13 @@ td.act{width:56px;padding:8px 16px;text-align:right;position:relative}
   </div>
 </div>
 <div class="proto-note">Prototype – sample data</div>
+<div id="sheet"></div>
 <div id="layer"></div>
 
 <script>
 /* ---------- Icons ---------- */
 const I = {
+  funnel:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/></svg>',
   plus:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>',
   filter:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 21V14.4142C10 14.149 9.89464 13.8946 9.70711 13.7071L3.29289 7.29289C3.10536 7.10536 3 6.851 3 6.58579V4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4V6.58579C21 6.851 20.8946 7.10536 20.7071 7.29289L14.2929 13.7071C14.1054 13.8946 14 14.149 14 14.4142V17L10 21Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>',
   chevR:'<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>',
@@ -297,7 +331,7 @@ const SEGMENTS = [
 const TYPE = {flat:'Flat discount', pct:'Percentage', free:'Free delivery', lottery:'Lottery'};
 const hasValue=t=>t==='flat'||t==='pct';
 const DIST = {
-  segment:{t:'Unique codes for a customer segment', short:'Unique · segment'},
+  segment:{t:'Unique codes by audience filters', short:'Unique · audience'},
   excel:{t:'Unique codes for customers from Excel', short:'Unique · Excel'},
   shared:{t:'One shared code', short:'Shared code'},
   unassigned:{t:'Unassigned codes', short:'Unassigned'}
@@ -673,7 +707,7 @@ function initForm(kind,rec){
   if(rec && kind==='code') form={kind,edit:true,...rec,from:rec.from,to:rec.to,count:rec.total,code:rec.prefix,hours:false};
   else if(rec) form={kind,edit:true,...rec};
   else form={kind,edit:false,type:'flat',value:'',min:'',max:'',from:TODAY,to:addDays(TODAY,30),hours:false,hFrom:0,hTo:23,
-    dist:'segment',segment:'Rizikoje',prefix:'',len:6,code:'',count:50,name:'',desc:'',customer:'',app:false,unlimited:false,
+    dist:'segment',segment:null,aud:{},paud:{},cmode:'custom',prefix:'',len:6,code:'',count:50,name:'',desc:'',customer:'',app:false,unlimited:false,
     pkind:'accumulative',cond:'orders',condValue:'',within:'days',days:30,couponDays:30,audience:'Lojalus'};
   if(rec && kind==='program') form.pkind=rec.kind;
 }
@@ -688,25 +722,97 @@ function tf(id,label,val,{hint,help,suffix,num,ph,cls='',type='text',ro}={}){
 function sel(id,label,val,opts,help){
   return `<div class="f"><div class="lbl-row"><label for="${id}">${label}</label></div><div class="input"><select id="${id}" data-k="${id}">${opts.map(([v,t])=>`<option value="${esc(v)}" ${String(v)===String(val)?'selected':''}>${esc(t)}</option>`).join('')}</select></div>${help?`<span class="help">${help}</span>`:''}</div>`;
 }
-const fsec=(title,inner,sub)=>`<div class="section"><div class="sec-head"><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}<hr></div><div class="fields">${inner}</div></div>`;
+const fsec=(title,inner,sub,cls='')=>`<div class="section"><div class="sec-head"><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}<hr></div><div class="fields ${cls}">${inner}</div></div>`;
 const segOpts=()=>SEGMENTS.map(([n,c])=>[n,n+' ('+nf(c)+')']);
 
-function discountFields(prefix){
+/* ---------- Audience (segment filters, simplified) ---------- */
+const AUD_BASE = 412380;
+const AUD_GROUPS = [
+  ['Location',[['region','Region',['Vilniaus','Kauno','Klaipėdos','Šiaulių','Panevėžio']],['city','City',['Vilnius','Kaunas','Klaipėda','Šiauliai','Panevėžys','Alytus']]]],
+  ['Segment',[['activity','Active or churned',['Active','Churned']]]],
+  ['Gifts',[['gifts','Agreed to receive gifts',['Yes','No']]]],
+  ['Date',[['lastOrder','Days after last order',['0–30','31–60','61–90','90+']],['regDate','Registration date',['This month','Last 3 months','This year','Earlier']]]],
+  ['Customer buying segments',[['profile','Customer profile',['Young parent','Pet owner','Promo hunter','One time buyer','Family customer','Occasional buyer']]]],
+  ['Subscriptions',[['subs','Subscriptions',['Marketing email','Marketing push','Marketing sms']]]]
+];
+const AUD_ALL = Object.fromEntries(AUD_GROUPS.flatMap(g=>g[1]).map(([k,l,o])=>[k,{l,o}]));
+const audCount=a=>{let n=AUD_BASE;Object.entries(a||{}).forEach(([k,v])=>{if(v&&v.length){const all=AUD_ALL[k].o.length;n*=Math.min(1,(v.length/all)*0.85+0.04)}});return Math.max(0,Math.round(n))};
+const audN=a=>Object.values(a||{}).filter(v=>v&&v.length).length;
+const audSummary=a=>{const n=audN(a);return n?n+(n===1?' filter':' filters'):'All customers'};
+let sheet={open:false,pop:null,draft:{}};
+
+function audienceControl(key,forCodes){
+  const a=form[key]||{}; const n=audN(a); const c=audCount(a);
+  const btn=n
+    ? `<button class="btn btn-white icon" data-aud="${key}">${I.funnel}Adjust filters <span class="pill">${n}</span></button><button class="link" data-audclear="${key}">Clear all</button>`
+    : `<button class="btn btn-white icon" data-aud="${key}">${I.funnel}Set up audience</button>`;
+  const cnt=forCodes
+    ? (n?`<div class="counter">${I.users}<span><b>${nf(c)}</b> customers – one code each</span></div>`
+        :`<div class="counter warn">${I.users}<span>No filters: codes will be created for <b>all ${nf(c)}</b> customers</span></div>`)
+    : `<div class="counter">${I.users}<span><b>${nf(c)}</b> customers match now</span></div>`;
+  return `<div class="aud-row">${btn}</div>${cnt}`;
+}
+function renderSheet(){
+  const el=document.getElementById('sheet');
+  if(!sheet.open){el.innerHTML='';return}
+  const d=sheet.draft;
+  const groupsHtml=AUD_GROUPS.map(([title,items])=>{
+    const chips=items.map(([k,l,o])=>{const sel=d[k]||[];return `<div class="chip-wrap"><button class="chip ${sel.length?'on':''}" data-schip="${k}">${l}${sel.length?` <span class="pill">${sel.length}</span>`:''}</button>
+      ${sheet.pop===k?`<div class="popover">${o.map(x=>`<label class="opt"><input type="checkbox" data-sopt="${esc(x)}" ${sel.includes(x)?'checked':''}>${esc(x)}</label>`).join('')}
+        <div class="pop-actions"><button class="link" data-sclear="${k}" style="margin-right:auto">Clear</button><button class="btn btn-white btn-sm" data-scancel>Cancel</button><button class="btn btn-primary btn-sm" data-sapply="${k}">Apply</button></div></div>`:''}</div>`}).join('');
+    const sum=items.filter(([k])=>d[k]&&d[k].length).map(([k,l])=>`<span class="sum">${l}: <b>${esc(d[k].join(', '))}</b><button class="x" data-sclear="${k}" aria-label="Remove">×</button></span>`).join('');
+    return `<div class="sg"><h3>${title}</h3><div class="chips">${chips}</div>${sum?`<div class="sums">${sum}</div>`:''}</div>`}).join('');
+  el.innerHTML=`<div class="sheet-bg" data-sclose></div><aside class="sheet">
+    <div class="sh-head"><button class="btn-icon sh-close" data-sclose aria-label="Close">${I.chevR}</button><h2>Set up audience</h2>${audN(d)?'<button class="link" data-sclearall>Clear all</button>':''}</div>
+    <div class="sh-body">${groupsHtml}</div>
+    <div class="sh-foot"><span>${I.users}<b>${nf(audCount(d))}</b> customers match</span><button class="btn btn-primary" data-sdone>Done</button></div>
+  </aside>`;
+  el.querySelectorAll('[data-sclose],[data-sdone]').forEach(b=>b.onclick=()=>{form[sheet.key]=JSON.parse(JSON.stringify(sheet.draft));sheet.open=false;sheet.pop=null;renderSheet();render(true)});
+  el.querySelectorAll('[data-schip]').forEach(b=>b.onclick=e=>{e.stopPropagation();sheet.pop=sheet.pop===b.dataset.schip?null:b.dataset.schip;renderSheet()});
+  el.querySelectorAll('[data-scancel]').forEach(b=>b.onclick=()=>{sheet.pop=null;renderSheet()});
+  el.querySelectorAll('[data-sapply]').forEach(b=>b.onclick=()=>{const k=b.dataset.sapply;d[k]=[...b.closest('.popover').querySelectorAll('[data-sopt]:checked')].map(i=>i.dataset.sopt);sheet.pop=null;renderSheet()});
+  el.querySelectorAll('[data-sclear]').forEach(b=>b.onclick=()=>{delete d[b.dataset.sclear];sheet.pop=null;renderSheet()});
+  el.querySelectorAll('[data-sclearall]').forEach(b=>b.onclick=()=>{sheet.draft={};sheet.pop=null;renderSheet()});
+  el.querySelector('.sheet').onclick=e=>{if(sheet.pop&&!e.target.closest('.chip-wrap')){sheet.pop=null;renderSheet()}};
+}
+
+/* ---------- Form building blocks ---------- */
+// Left: what is decided + short explanation. Right: the control.
+const frow=(title,desc,control,cls='')=>`<div class="frow ${cls}"><div class="fl"><div class="t">${title}</div>${desc?`<div class="s">${desc}</div>`:''}</div><div class="fr">${control}</div></div>`;
+
+function discountRows(){
   const f=form; const sfx=f.type==='pct'?'%':'€'; const isCode=f.kind==='code';
   if(!isCode && f.type==='lottery') f.type='flat';
-  const minF=tf('min','Minimum basket',f.min,{suffix:'€',num:true,help:'Barbora\'s minimum order is 19,99 €. Codes are checked against the basket without excluded items.'});
-  return `<div class="f full"><span class="lbl">Discount type</span><div class="radios inline" style="margin-top:8px">
-      ${radioOpt('type','flat',f.type,'Flat discount','Amount in € off the basket')}
-      ${radioOpt('type','pct',f.type,'Percentage','% off the basket')}
-      ${radioOpt('type','free',f.type,'Free delivery','')}
-      ${isCode?radioOpt('type','lottery',f.type,'Lottery','Customer takes part in a draw'):''}
-    </div></div>
-    ${f.type==='lottery'?`<span class="help" style="margin-top:-16px">Lottery conditions (e.g. products or categories) will be added later.</span>`:''}
-    <div class="pair">
-      ${hasValue(f.type)?tf('value','Discount value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}
-      ${minF}
-    </div>
-    ${f.type==='pct'?`<div class="pair">${tf('max','Maximum basket',f.max,{suffix:'€',num:true,help:'The discount is calculated up to this amount.'})}</div>`:''}`;
+  if(f.edit){
+    return frow('Discount','Cannot be changed after creation.',
+        `${tf('typeRo','Type',TYPE[f.type],{ro:true})}${hasValue(f.type)?tf('valueRo','Value',valueTxt(f),{ro:true,cls:'narrow'}):''}${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow',help:'The discount is calculated up to this amount.'}):''}`)
+      +frow('Minimum basket','The basket amount a customer must reach. Alcohol, infant formula and (LV) energy drinks are not counted.',tf('min','Amount',f.min,{suffix:'€',num:true,cls:'narrow'}));
+  }
+  return frow('Discount','How the discount is applied to the basket.',
+      `<div class="radios">
+        ${radioOpt('type','flat',f.type,'Flat discount','Amount in € off the basket')}
+        ${radioOpt('type','pct',f.type,'Percentage','% off the basket')}
+        ${radioOpt('type','free',f.type,'Free delivery','')}
+        ${isCode?radioOpt('type','lottery',f.type,'Lottery','Customer takes part in a draw. Conditions will be added later.'):''}
+      </div>
+      ${hasValue(f.type)?tf('value','Value',f.value,{suffix:sfx,num:true,cls:'narrow'}):''}
+      ${f.type==='pct'?tf('max','Maximum basket',f.max,{suffix:'€',num:true,cls:'narrow',hint:'Optional',help:'The discount is calculated up to this amount.'}):''}`)
+    +frow('Minimum basket','The basket amount a customer must reach. Alcohol, infant formula and (LV) energy drinks are not counted.',
+      tf('min','Amount',f.min,{suffix:'€',num:true,cls:'narrow',help:'Barbora\'s minimum order is 19,99 €.'}));
+}
+
+function codeFormatRow(){
+  const f=form;
+  const custom=f.dist==='shared' && f.cmode==='custom';
+  const rnd='X7K2PQ9M'.slice(0,Math.max(0,Math.min(8,+f.len||0)));
+  const gen=`<div class="pair">${tf('prefix','Prefix',f.prefix,{ph:'e.g. KAC',hint:'Optional',cls:'narrow'})}${tf('len','Random characters',f.len,{num:true,cls:'narrow'})}</div>
+    <span class="help">Example: <span class="code">${esc((f.prefix||'').toUpperCase())}${rnd}</span></span>`;
+  const ctrl=(f.dist==='shared'?`<div class="radios">
+      ${radioOpt('cmode','custom',f.cmode,'Custom code','Enter the exact code, e.g. PUPELE')}
+      ${radioOpt('cmode','generated',f.cmode,'Generated code','Prefix and random characters')}
+    </div>`:'')
+    +(custom?tf('code','Code',f.code,{ph:'e.g. PUPELE',help:'Each customer can use the code once. Check that the code is not used yet.'}):gen);
+  return frow('Code format',f.dist==='shared'?'The code all customers will enter.':'Every code gets a unique random part.',ctrl);
 }
 
 function formPage(kind,rec){
@@ -730,77 +836,64 @@ function formPage(kind,rec){
       </div>`);
   }
 
-  // names and texts first, as in the old admin
-  inner+=fsec('Names and texts',isCode
-    ? `${tf('name','Name',f.name,{cls:'full',ph:'e.g. KAC 2026 11 24 5 EUR',help:'Internal, customers do not see it.'})}
-       <div class="pair">
-       <div class="f"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" placeholder="Why the codes are created, e.g. the complaint reason">${esc(f.desc)}</textarea></div></div>
-       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label><span class="hint">Optional</span></div><div class="input"><textarea id="customer" data-k="customer" placeholder="${esc(autoText())}">${esc(f.customer)}</textarea></div><span class="help">Shown to the customer with the code. If empty, it is generated from the discount below.</span></div>
-       </div>`
-    : `${tf('name','Name',f.name,{cls:'full',help:'Internal, customers do not see it.'})}
-       <div class="pair">
-       <div class="f"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc">${esc(f.desc)}</textarea></div></div>
-       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label><span class="hint">Optional</span></div><div class="input"><textarea id="customer" data-k="customer" placeholder="${esc(autoText())}">${esc(f.customer)}</textarea></div><span class="help">If empty, it is generated from the coupon below.</span></div>
-       </div>`);
+  // names and texts first, as in the old admin (stacked grid)
+  inner+=fsec('Names and texts',
+    `${tf('name','Name',f.name,{cls:'full',ph:isCode?'e.g. KAC 2026 11 24 5 EUR':'',help:'Internal, customers do not see it.'})}
+     <div class="pair">
+       <div class="f"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" ${isCode?'placeholder="Why the codes are created, e.g. the complaint reason"':''}>${esc(f.desc)}</textarea></div></div>
+       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label><span class="hint">Optional</span></div><div class="input"><textarea id="customer" data-k="customer" placeholder="${esc(autoText())}">${esc(f.customer)}</textarea></div><span class="help">If empty, it is generated from the ${isCode?'discount':'coupon'} below.</span></div>
+     </div>`);
 
   if(isCode){
-    inner+=fsec('Discount', f.edit
-      ? `<div class="pair">${tf('typeRo','Discount type',TYPE[f.type],{ro:true})}</div>
-         <div class="pair">${hasValue(f.type)?tf('valueRo','Discount value',valueTxt(f),{ro:true,cls:'narrow'}):''}${tf('min','Minimum basket',f.min,{suffix:'€',num:true})}</div>
-         ${f.type==='pct'?`<div class="pair">${tf('max','Maximum basket',f.max,{suffix:'€',num:true})}</div>`:''}`
-      : discountFields());
+    inner+=fsec('Discount',discountRows(),null,'rows');
     inner+=fsec('Validity',
-      `<div class="pair">${tf('from','Valid from',f.from,{type:'date'})}${tf('to','Valid to',f.to,{type:'date'})}</div>
-       <span class="help" style="margin-top:-16px">By delivery date. The code works on both dates.</span>
-       <label class="check"><input type="checkbox" data-k="hours" ${f.hours?'checked':''}><span><span class="t">Limit to delivery hours</span><br><span class="s">Rarely used. By default the code works for all delivery slots.</span></span></label>
-       ${f.hours?`<div class="pair">${sel('hFrom','From',f.hFrom,[...Array(24).keys()].map(h=>[h,h+':00']))}${sel('hTo','To',f.hTo,[...Array(24).keys()].map(h=>[h,h+':00']))}</div>`:''}`);
+      frow('Valid','By delivery date. The code works on both dates.',
+        `<div class="pair">${tf('from','From',f.from,{type:'date',cls:'narrow'})}${tf('to','To',f.to,{type:'date',cls:'narrow'})}</div>
+         <label class="check"><input type="checkbox" data-k="hours" ${f.hours?'checked':''}><span><span class="t">Limit to delivery hours</span><br><span class="s">Rarely used. By default the code works for all delivery slots.</span></span></label>
+         ${f.hours?`<div class="pair">${sel('hFrom','From',f.hFrom,[...Array(24).keys()].map(h=>[h,h+':00']))}${sel('hTo','To',f.hTo,[...Array(24).keys()].map(h=>[h,h+':00']))}</div>`:''}`),null,'rows');
     if(f.edit){
-      inner+=sec('Distribution',`${vrow('How codes are given',DIST[f.dist].t)}${f.dist==='shared'?vrow('Code','<span class="code">'+esc(f.prefix)+'</span>'):vrow('Codes',nf(f.total)+' · prefix <span class="code">'+esc(f.prefix)+'</span>')}`,'Codes cannot be changed after they are created.');
+      inner+=sec('Distribution',`${vrow('How codes are given',DIST[f.dist].t+(f.segment?' <span class="note">· '+esc(f.segment)+'</span>':''))}${f.dist==='shared'?vrow('Code','<span class="code">'+esc(f.prefix)+'</span>'):vrow('Codes',nf(f.total)+' · prefix <span class="code">'+esc(f.prefix)+'</span>')}`,'Codes cannot be changed after they are created.');
     } else {
-      const seg=SEGMENTS.find(s=>s[0]===f.segment);
-      let dyn='';
-      if(f.dist==='segment') dyn=`${sel('segment','Customer segment',f.segment,segOpts())}
-        <div class="counter">${I.users}<span>Codes to create: <b>${nf(seg?seg[1]:0)}</b> – one per customer</span></div>`;
-      if(f.dist==='excel') dyn=`<div class="f full"><span class="lbl">Customer list</span><div class="dropzone" style="margin-top:4px"><b>Upload a file</b> or drag and drop<br><span class="help">.xlsx with one customer email per row</span></div></div>`;
-      if(f.dist==='shared') dyn=tf('code','Code',f.code,{ph:'e.g. PUPELE',help:'Each customer can use the code once. Check that the code is not used yet.'});
-      if(f.dist==='unassigned') dyn=tf('count','Number of codes',f.count,{num:true,cls:'narrow',help:'An Excel file with the codes downloads after creation.'});
-      if(f.dist!=='shared') dyn+=`<div class="pair">${tf('prefix','Code prefix',f.prefix,{ph:'e.g. KAC',hint:'Optional'})}${tf('len','Random characters',f.len,{num:true,cls:'narrow'})}</div>
-        <span class="help" style="margin-top:-16px">Example: <span class="code">${esc((f.prefix||'').toUpperCase())}${'X7K2PQ9M'.slice(0,Math.max(0,Math.min(8,+f.len||0)))}</span></span>`;
-      inner+=fsec('Who gets the codes',
+      let rows=frow('Who gets the codes','Unique codes are personal. A shared code is the same for everyone.',
         `<div class="radios">
-          ${radioOpt('dist','segment',f.dist,DIST.segment.t,'A personal code for every customer in the segment.')}
-          ${radioOpt('dist','excel',f.dist,DIST.excel.t,'A personal code for every email in the file.')}
-          ${radioOpt('dist','shared',f.dist,DIST.shared.t,'The same code for everyone, e.g. for a lottery or a public campaign.')}
-          ${radioOpt('dist','unassigned',f.dist,DIST.unassigned.t,'Codes without a customer – handed out later, e.g. customer service compensations or flyers.')}
-        </div>${dyn}`);
+          ${radioOpt('dist','segment',f.dist,'Customers by audience filters','A personal code for every customer who matches the filters.')}
+          ${radioOpt('dist','excel',f.dist,'Customers from a file','A personal code for every email in the file.')}
+          ${radioOpt('dist','shared',f.dist,'Everyone – one shared code','The same code for everyone, e.g. for a lottery or a public campaign.')}
+          ${radioOpt('dist','unassigned',f.dist,'Codes without customers','Handed out later, e.g. customer service compensations or flyers.')}
+        </div>`);
+      if(f.dist==='segment') rows+=frow('Target audience','Define which customers get a code.',audienceControl('aud',true));
+      if(f.dist==='excel') rows+=frow('Customer list','An .xlsx file with one customer email per row.',`<div class="dropzone"><b>Upload a file</b> or drag and drop</div>`);
+      if(f.dist==='unassigned') rows+=frow('Number of codes','An Excel file with the codes downloads after creation.',tf('count','Codes',f.count,{num:true,cls:'narrow'}));
+      rows+=codeFormatRow();
+      inner+=fsec('Codes',rows,null,'rows');
     }
     inner+=fsec('Additional options',
-      `<label class="check"><input type="checkbox" data-k="app" ${f.app?'checked':''}><span><span class="t">App only</span><br><span class="s">The code works only in the Barbora app.</span></span></label>
-       <label class="check"><input type="checkbox" data-k="unlimited" ${f.unlimited?'checked':''}><span><span class="t">Unlimited uses</span><br><span class="s">The same customer can use the code more than once.</span></span></label>`);
+      frow('Usage','Where and how often the code can be used.',
+        `<label class="check"><input type="checkbox" data-k="app" ${f.app?'checked':''}><span><span class="t">App only</span><br><span class="s">The code works only in the Barbora app.</span></span></label>
+         <label class="check"><input type="checkbox" data-k="unlimited" ${f.unlimited?'checked':''}><span><span class="t">Unlimited uses</span><br><span class="s">The same customer can use the code more than once.</span></span></label>`),null,'rows');
   } else {
-    inner+=fsec('Program type',
-      `<div class="radios">
-        ${radioOpt('pkind','accumulative',f.pkind,'Accumulative','Customer gets a coupon after a number of orders or a spent amount within a period.',f.edit?'disabled':'')}
-        ${radioOpt('pkind','new',f.pkind,'New customer','Coupon for the first order, given when the customer registers.',f.edit?'disabled':'')}
-        ${radioOpt('pkind','business',f.pkind,'Business customers','Partner company employees get a reusable coupon without a condition.',f.edit?'disabled':'')}
-      </div>
-      ${f.pkind==='new'?`<div class="info">${I.infoS}<div>Only <b>one</b> new customer program can be active at a time.</div></div>`:''}`);
+    inner+=fsec('Program',
+      frow('Program type',f.edit?'Cannot be changed after creation.':'Defines when customers get the coupon.',
+        `<div class="radios">
+          ${radioOpt('pkind','accumulative',f.pkind,'Accumulative','After a number of orders or a spent amount within a period.',f.edit?'disabled':'')}
+          ${radioOpt('pkind','new',f.pkind,'New customer','Coupon for the first order, given when the customer registers. Only one can be active at a time.',f.edit?'disabled':'')}
+          ${radioOpt('pkind','business',f.pkind,'Business customers','Partner company employees get a reusable coupon without a condition.',f.edit?'disabled':'')}
+        </div>`),null,'rows');
     if(f.pkind==='accumulative') inner+=fsec('Condition',
-      `<div class="f full"><span class="lbl">Customer must reach</span><div class="radios inline" style="margin-top:8px">
-        ${radioOpt('cond','orders',f.cond,'Number of orders','')}${radioOpt('cond','total',f.cond,'Amount spent','')}</div></div>
-       ${tf('condValue',f.cond==='orders'?'Orders':'Amount',f.condValue,{num:true,cls:'narrow',suffix:f.cond==='orders'?'orders':'€',help:'Orders with status Delivered or later are counted.'})}
-       <div class="f full"><span class="lbl">Within</span><div class="radios inline" style="margin-top:8px">
-        ${radioOpt('within','days',f.within,'A number of days','')}${radioOpt('within','month',f.within,'A calendar month','')}</div></div>
-       ${f.within==='days'?tf('days','Days',f.days,{num:true,cls:'narrow',suffix:'days'}):''}`);
-    inner+=fsec('Coupon',discountFields()+(f.pkind==='business'?'':tf('couponDays','Coupon valid for',f.couponDays,{num:true,cls:'narrow',suffix:'days',help:'Counted from the moment the coupon is issued.'})));
-    inner+=fsec('Program period',
-      `<div class="pair">${tf('from','Starts',f.from,{type:'date'})}${tf('to','Ends',f.to,{type:'date'})}</div>
-       <span class="help" style="margin-top:-16px">The program stops issuing coupons at 00:00 on the end date. Issued coupons stay valid.</span>`);
+      frow('Customer must reach','Orders with status Delivered or later are counted.',
+        `<div class="radios inline">${radioOpt('cond','orders',f.cond,'Number of orders','')}${radioOpt('cond','total',f.cond,'Amount spent','')}</div>
+         ${tf('condValue',f.cond==='orders'?'Orders':'Amount',f.condValue,{num:true,cls:'narrow',suffix:f.cond==='orders'?'orders':'€'})}`)
+      +frow('Within','The period in which the condition must be met.',
+        `<div class="radios inline">${radioOpt('within','days',f.within,'A number of days','')}${radioOpt('within','month',f.within,'A calendar month','')}</div>
+         ${f.within==='days'?tf('days','Days',f.days,{num:true,cls:'narrow',suffix:'days'}):''}`),null,'rows');
+    inner+=fsec('Coupon',discountRows()+(f.pkind==='business'?'':frow('Coupon valid for','Counted from the moment the coupon is issued.',tf('couponDays','Days',f.couponDays,{num:true,cls:'narrow',suffix:'days'}))),null,'rows');
+    inner+=fsec('Program period',frow('Program period','The program stops issuing coupons at 00:00 on the end date. Issued coupons stay valid.',
+      `<div class="pair">${tf('from','Starts',f.from,{type:'date',cls:'narrow'})}${tf('to','Ends',f.to,{type:'date',cls:'narrow'})}</div>`),null,'rows');
     let part='';
-    if(f.pkind==='accumulative') part=sel('audience','Customer segment',f.audience,segOpts(),'The participant list is updated from the segment.');
-    if(f.pkind==='new') part=vrow('Participants','Registered customers with no orders (segment Registruotas)');
-    if(f.pkind==='business') part=`<div class="f full"><span class="lbl">Employee emails</span><div class="dropzone" style="margin-top:4px"><b>Upload a file</b> or drag and drop<br><span class="help">.xlsx with one email per row</span></div></div>`;
-    inner+=fsec('Participants',part);
+    if(f.pkind==='accumulative') part=frow('Target audience','Define which customers take part. The list is updated automatically.',audienceControl('paud',false));
+    if(f.pkind==='new') part=frow('Participants','Set by the program type.','<div class="ro-text">Registered customers with no orders</div>');
+    if(f.pkind==='business') part=frow('Employee emails','An .xlsx file with one email per row.',`<div class="dropzone"><b>Upload a file</b> or drag and drop</div>`);
+    inner+=fsec('Participants',part,null,'rows');
   }
 
   const cancel=f.edit?((isCode?'#/groups/':'#/programs/')+rec.id):(isCode?'#/groups':'#/programs');
@@ -848,13 +941,15 @@ function bind(){
   // form
   v.querySelectorAll('input[type=radio]').forEach(r=>r.onchange=()=>{
     if(r.name==='kind'){ const k=r.value; form._key=null; go(k==='program'?'#/create?kind=program':'#/create'); return; }
-    form[r.name]=r.value; render(true)});
+    form[r.name]=r.value; if(r.name==='dist'&&r.value!=='shared') form.cmode='custom'; render(true)});
   v.querySelectorAll('[data-k]').forEach(i=>{
     if(i.type==='checkbox'){i.onchange=()=>{form[i.dataset.k]=i.checked;render(true)};return}
     const rerender=['segment','prefix','len','value','min','audience'].includes(i.dataset.k);
     const ev=i.tagName==='SELECT'?'onchange':'oninput';
     i[ev]=()=>{form[i.dataset.k]=i.value; if(rerender){const id=i.id,pos=i.selectionStart;render(true);const n=document.getElementById(id);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}};
   });
+  v.querySelectorAll('[data-aud]').forEach(b=>b.onclick=e=>{e.preventDefault();sheet={open:true,pop:null,key:b.dataset.aud,draft:JSON.parse(JSON.stringify(form[b.dataset.aud]||{}))};renderSheet()});
+  v.querySelectorAll('[data-audclear]').forEach(b=>b.onclick=e=>{e.preventDefault();form[b.dataset.audclear]={};render(true)});
   const s=document.getElementById('submit'); if(s) s.onclick=submit;
 }
 function submit(){
@@ -862,7 +957,7 @@ function submit(){
   const err=(id,msg)=>{const w=document.getElementById('w-'+id);if(w){w.classList.add('err');let h=document.getElementById('h-'+id);if(!h){h=document.createElement('span');h.id='h-'+id;w.after(h)}h.className='help err';h.textContent=msg;w.scrollIntoView({block:'center',behavior:'smooth'})}};
   if(!f.edit && hasValue(f.type) && (f.value===''||f.value==null)) return err('value','Enter the discount value.');
   if(!String(f.name||'').trim()) return err('name','Enter a name.');
-  if(f.kind==='code' && !f.edit && f.dist==='shared' && !String(f.code||'').trim()) return err('code','Enter the code.');
+  if(f.kind==='code' && !f.edit && f.dist==='shared' && f.cmode==='custom' && !String(f.code||'').trim()) return err('code','Enter the code.');
   const num=x=>x===''||x==null?null:parseFloat(String(x).replace(',','.'));
   if(f.edit){
     const arr=f.kind==='code'?groups:programs; const rec=arr.find(x=>x.id===f.id);
@@ -871,18 +966,19 @@ function submit(){
   }
   if(f.kind==='program'){
     const id=Math.max(...programs.map(p=>p.id))+1;
-    programs.unshift({id,name:f.name,kind:f.pkind,cond:f.cond,condValue:num(f.condValue),within:f.within,days:num(f.days),type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),couponDays:f.pkind==='business'?null:num(f.couponDays),from:f.from,to:f.to,audience:f.pkind==='new'?'Registruotas':f.pkind==='business'?'Excel: 0 emails':f.audience,desc:f.desc,customer:f.customer||autoText()});
+    programs.unshift({id,name:f.name,kind:f.pkind,cond:f.cond,condValue:num(f.condValue),within:f.within,days:num(f.days),type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),couponDays:f.pkind==='business'?null:num(f.couponDays),from:f.from,to:f.to,audience:f.pkind==='new'?'Registruotas':f.pkind==='business'?'Excel: 0 emails':audSummary(f.paud),desc:f.desc,customer:f.customer||autoText()});
     form._key=null; go('#/programs/'+id); toast('Program created.'); return;
   }
-  const seg=SEGMENTS.find(s=>s[0]===f.segment);
-  const total=f.dist==='segment'?seg[1]:f.dist==='excel'?120:f.dist==='shared'?1:Math.max(1,parseInt(f.count)||1);
+  const audC=audCount(f.aud);
+  const sharedCode=f.cmode==='custom'?String(f.code).toUpperCase():String(f.prefix||'').toUpperCase()+'X7K2PQ9M'.slice(0,Math.max(0,Math.min(8,+f.len||0)));
+  const total=f.dist==='segment'?audC:f.dist==='excel'?120:f.dist==='shared'?1:Math.max(1,parseInt(f.count)||1);
   const create=()=>{
     const id=Math.max(...groups.map(g=>g.id))+1;
-    const g={id,name:f.name,type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),from:f.from,to:f.to,dist:f.dist,segment:f.dist==='segment'?f.segment:null,total,used:0,prefix:f.dist==='shared'?String(f.code).toUpperCase():String(f.prefix||'').toUpperCase(),len:f.dist==='shared'?0:parseInt(f.len)||6,desc:f.desc,customer:f.customer||autoText(),app:!!f.app,unlimited:!!f.unlimited,disabled:false,created:TODAY};
+    const g={id,name:f.name,type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),from:f.from,to:f.to,dist:f.dist,segment:f.dist==='segment'?audSummary(f.aud):null,total,used:0,prefix:f.dist==='shared'?sharedCode:String(f.prefix||'').toUpperCase(),len:f.dist==='shared'?0:parseInt(f.len)||6,desc:f.desc,customer:f.customer||autoText(),app:!!f.app,unlimited:!!f.unlimited,disabled:false,created:TODAY};
     groups.unshift(g); codes.push(...sampleCodes(g)); form._key=null; go('#/groups/'+id);
     toast(f.dist==='unassigned'?nf(total)+' codes created. The Excel file is downloading.':nf(total)+(total===1?' code':' codes')+' created.');
   };
-  if(f.dist==='segment') confirmModal('Create '+nf(total)+' codes?','A personal code will be created for every customer in the segment <b>'+esc(f.segment)+'</b>. This cannot be undone, but the group can be disabled.','Create codes',create);
+  if(f.dist==='segment') confirmModal('Create '+nf(total)+' codes?','A personal code will be created for every customer who matches '+(audN(f.aud)?'the <b>'+audSummary(f.aud)+'</b>':'<b>no filters – all customers</b>')+'. This cannot be undone, but the group can be disabled.','Create codes',create);
   else create();
 }
 render();
