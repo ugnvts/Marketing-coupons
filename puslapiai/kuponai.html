@@ -841,7 +841,7 @@ function formPage(kind,rec){
     `${tf('name','Name',f.name,{cls:'full',ph:isCode?'e.g. KAC 2026 11 24 5 EUR':'',help:'Internal, customers do not see it.'})}
      <div class="pair">
        <div class="f"><div class="lbl-row"><label for="desc">Internal description</label><span class="hint">Optional</span></div><div class="input"><textarea id="desc" data-k="desc" ${isCode?'placeholder="Why the codes are created, e.g. the complaint reason"':''}>${esc(f.desc)}</textarea></div></div>
-       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label><span class="hint">Optional</span></div><div class="input"><textarea id="customer" data-k="customer" placeholder="${esc(autoText())}">${esc(f.customer)}</textarea></div><span class="help">If empty, it is generated from the ${isCode?'discount':'coupon'} below.</span></div>
+       <div class="f"><div class="lbl-row"><label for="customer">Text for customers</label><span class="hint">Optional</span></div><div class="input"><textarea id="customer" data-k="customer" placeholder="e.g. Dėkojame, kad perkate.">${esc(f.customer)}</textarea></div></div>
      </div>`);
 
   if(isCode){
@@ -961,12 +961,12 @@ function submit(){
   const num=x=>x===''||x==null?null:parseFloat(String(x).replace(',','.'));
   if(f.edit){
     const arr=f.kind==='code'?groups:programs; const rec=arr.find(x=>x.id===f.id);
-    Object.assign(rec,{name:f.name,desc:f.desc,customer:f.customer||autoText(),min:num(f.min),max:num(f.max),from:f.from,to:f.to,app:!!f.app,unlimited:!!f.unlimited});
+    Object.assign(rec,{name:f.name,desc:f.desc,customer:f.customer||'',min:num(f.min),max:num(f.max),from:f.from,to:f.to,app:!!f.app,unlimited:!!f.unlimited});
     form._key=null; go((f.kind==='code'?'#/groups/':'#/programs/')+rec.id); toast('Changes saved.'); return;
   }
   if(f.kind==='program'){
     const id=Math.max(...programs.map(p=>p.id))+1;
-    programs.unshift({id,name:f.name,kind:f.pkind,cond:f.cond,condValue:num(f.condValue),within:f.within,days:num(f.days),type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),couponDays:f.pkind==='business'?null:num(f.couponDays),from:f.from,to:f.to,audience:f.pkind==='new'?'Registruotas':f.pkind==='business'?'Excel: 0 emails':audSummary(f.paud),desc:f.desc,customer:f.customer||autoText()});
+    programs.unshift({id,name:f.name,kind:f.pkind,cond:f.cond,condValue:num(f.condValue),within:f.within,days:num(f.days),type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),couponDays:f.pkind==='business'?null:num(f.couponDays),from:f.from,to:f.to,audience:f.pkind==='new'?'Registruotas':f.pkind==='business'?'Excel: 0 emails':audSummary(f.paud),desc:f.desc,customer:f.customer||''});
     form._key=null; go('#/programs/'+id); toast('Program created.'); return;
   }
   const audC=audCount(f.aud);
@@ -974,7 +974,7 @@ function submit(){
   const total=f.dist==='segment'?audC:f.dist==='excel'?120:f.dist==='shared'?1:Math.max(1,parseInt(f.count)||1);
   const create=()=>{
     const id=Math.max(...groups.map(g=>g.id))+1;
-    const g={id,name:f.name,type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),from:f.from,to:f.to,dist:f.dist,segment:f.dist==='segment'?audSummary(f.aud):null,total,used:0,prefix:f.dist==='shared'?sharedCode:String(f.prefix||'').toUpperCase(),len:f.dist==='shared'?0:parseInt(f.len)||6,desc:f.desc,customer:f.customer||autoText(),app:!!f.app,unlimited:!!f.unlimited,disabled:false,created:TODAY};
+    const g={id,name:f.name,type:f.type,value:num(f.value),min:num(f.min),max:num(f.max),from:f.from,to:f.to,dist:f.dist,segment:f.dist==='segment'?audSummary(f.aud):null,total,used:0,prefix:f.dist==='shared'?sharedCode:String(f.prefix||'').toUpperCase(),len:f.dist==='shared'?0:parseInt(f.len)||6,desc:f.desc,customer:f.customer||'',app:!!f.app,unlimited:!!f.unlimited,disabled:false,created:TODAY};
     groups.unshift(g); codes.push(...sampleCodes(g)); form._key=null; go('#/groups/'+id);
     toast(f.dist==='unassigned'?nf(total)+' codes created. The Excel file is downloading.':nf(total)+(total===1?' code':' codes')+' created.');
   };
